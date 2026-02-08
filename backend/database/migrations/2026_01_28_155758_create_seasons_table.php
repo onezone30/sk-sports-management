@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('seasons', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class, 'handler_id')
+            $table->foreignIdFor(User::class, 'chairman_id')
                 ->constrained()
                 ->cascadeOnDelete();
             $table->string('name')->nullable();
