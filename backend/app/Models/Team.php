@@ -12,7 +12,6 @@ class Team extends Model
 
     protected $fillable = [
         'handler_id', 
-        'season_id', 
         'division_id', 
         'name', 
         'slug', 
@@ -24,11 +23,6 @@ class Team extends Model
     public function handler()
     {
         return $this->belongsTo(User::class, 'handler_id');
-    }
-
-    public function season()
-    {
-        return $this->belongsTo(Season::class);
     }
 
     public function division()

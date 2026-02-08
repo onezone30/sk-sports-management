@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\ActiveStatus;
-use App\Models\Sport;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,14 +15,13 @@ return new class extends Migration
     {
         Schema::create('seasons', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Sport::class)
-                ->constrained()
-                ->cascadeOnDelete();
             $table->foreignIdFor(User::class, 'handler_id')
                 ->constrained()
                 ->cascadeOnDelete();
             $table->string('name')->nullable();
-            $table->year('year')->unique();
+            $table->year('year');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->string('status')->default(ActiveStatus::ACTIVE->value);
             $table->timestamps();
         });

@@ -18,9 +18,9 @@ return new class extends Migration
             $table->foreignIdFor(Sport::class)
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->string('name')->unique();
-            $table->integer('min_age')->nullable();
-            $table->integer('max_age')->nullable();
+            $table->string('name');
+            $table->integer('min_age');
+            $table->integer('max_age');
             $table->string('gender_requirement')->nullable();
             $table->string('status')->default(ActiveStatus::ACTIVE->value);
             $table->timestamps();

@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Division;
-use App\Models\Season;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -19,13 +18,10 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'handler_id')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->foreignIdFor(Season::class)
-                ->constrained()
-                ->cascadeOnDelete();
             $table->foreignIdFor(Division::class)
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->string('street')->nullable();
             $table->string('slug')->unique();
             $table->string('description')->nullable();

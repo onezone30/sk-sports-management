@@ -11,7 +11,6 @@ class Season extends Model
     use HasFactory;
 
     protected $fillable = [
-        'sport_id', 
         'handler_id', 
         'name', 
         'year', 
@@ -21,24 +20,24 @@ class Season extends Model
     ];
 
 
-    public function sport()
-    {
-        return $this->belongsTo(Sport::class);
-    }
-
     public function handler()
     {
         return $this->belongsTo(User::class, 'handler_id');
     }
 
-    public function teams()
+    public function sports()
     {
-        return $this->hasMany(Team::class);
+        return $this->hasMany(Sport::class);
     }
 
-    public function games()
+    public function divisions()
     {
-        return $this->hasMany(Game::class);
+        return $this->hasManyThrough(Division::class, Sport::class);
+    }
+
+    public function teams()
+    {
+        return $this->hasManyThrough(Team::class, Division::class);
     }
 
     public function attachments()

@@ -13,6 +13,8 @@ class Division extends Model
 
     protected $fillable = [
         'sport_id', 
+        'min_age',
+        'max_age',
         'name'
     ];
 

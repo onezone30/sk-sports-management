@@ -16,15 +16,16 @@ class Sport extends Model
     ];
 
     protected $fillable = [
+        'season_id',
         'name',
         'category',
         'max_players_per_team',
         'status',
     ];
 
-    public function seasons()
+    public function season()
     {
-        return $this->hasMany(Season::class);
+        return $this->belongsTo(Season::class);
     }
 
     public function divisions()

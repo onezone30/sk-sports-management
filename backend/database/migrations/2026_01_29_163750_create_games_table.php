@@ -2,8 +2,6 @@
 
 use App\Enums\ActiveStatus;
 use App\Models\Player;
-use App\Models\Season;
-use App\Models\Sport;
 use App\Models\Team;
 use App\Models\Venue;
 use Illuminate\Database\Migrations\Migration;
@@ -19,9 +17,6 @@ return new class extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Season::class)
-                ->constrained()
-                ->cascadeOnDelete();
             $table->foreignIdFor(Team::class, 'home_team_id')
                 ->constrained()
                 ->cascadeOnDelete();
@@ -29,6 +24,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
             $table->foreignIdFor(Venue::class)
+                ->nullable()
                 ->constrained()
                 ->cascadeOnDelete();
             $table->foreignIdFor(Player::class, 'player_of_the_game_id')

@@ -18,11 +18,6 @@ class Game extends Model
         'status'
     ];
 
-    public function season()
-    {
-        return $this->belongsTo(Season::class);
-    }
-
     public function homeTeam()
     {
         return $this->belongsTo(Team::class, 'home_team_id');
