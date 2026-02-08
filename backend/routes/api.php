@@ -35,4 +35,10 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::get('/season/{id}', [SeasonController::class, 'show']);
     Route::patch('/season/{id}', [SeasonController::class, 'update']);
     Route::delete('/season/{id}', [SeasonController::class, 'destroy']);
+
+    Route::get('/sports', [SportController::class, 'index']);
+    Route::post('/sports', [SportController::class, 'store']);
+    Route::get('/sport/{id}', [SportController::class, 'show']);
+    Route::patch('/sport/{id}', [SportController::class, 'update']);
+    Route::delete('/sport/{id}', [SportController::class, 'destroy']);
 });
