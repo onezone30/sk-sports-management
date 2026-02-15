@@ -1,7 +1,7 @@
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { ArrowRight, PlayCircle } from "lucide-react";
-import heroImage from "../../../assets/hero.jpg";
+import heroImage from "../../../assets/SK_background.png";
 
 export default function HeroSection() {
     return (
