@@ -1,88 +1,85 @@
- import { Badge } from "../../../components/ui/badge";
- import { Button } from "../../../components/ui/button";
- import { Card, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
- import { Calendar, Shield, Target, Trophy, Users, Zap } from "lucide-react";
+import HeroSection from "../components/HeroSection";
+import FeaturedCard from "../components/FeaturedCard";
+import StatsSection from "../components/StatsSection";      
+import TestimonialsSection from "../components/TestimonialSection"; 
+import CTASection from "../components/CTASection";          
+import Footer from "../../../components/layouts/Footer";
+import { Users, Calendar, Trophy, Target, Zap, Shield } from "lucide-react";
 
- export default function Landing() {
-   return (
-     <div className="w-full min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-       <section className="px-4 py-20">
-         <div className="mx-auto max-w-6xl text-center">
-           <Badge className="mb-4">Sports Management Platform</Badge>
-           <h1 className="mb-6 text-4xl font-bold tracking-tight text-gray-900 md:text-6xl">
-             Manage Your Sports Team
-             <span className="text-blue-600"> Like a Pro</span>
-           </h1>
-           <p className="mx-auto mb-8 max-w-2xl text-lg text-gray-600 md:text-xl">
-             Teams, schedules, stats, and communication in one place—built to scale with your club.
-           </p>
-           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-             <Button size="lg" className="px-8">Start Free Trial</Button>
-             <Button size="lg" variant="outline" className="px-8">
-               View Demo
-             </Button>
-           </div>
-         </div>
-       </section>
+// Keep your features data here
+const features = [
+  {
+    title: "Team Management",
+    description: "Effortlessly manage player rosters, profiles, and staff roles in one central database.",
+    icon: Users,
+    color: "text-blue-600",
+  },
+  {
+    title: "Smart Scheduling",
+    description: "Coordinate matches, trainings, and team events with automated conflict detection.",
+    icon: Calendar,
+    color: "text-green-600",
+  },
+  {
+    title: "Stats & Analytics",
+    description: "Track player performance, match outcomes, and generate professional reports.",
+    icon: Trophy,
+    color: "text-yellow-600",
+  },
+  {
+    title: "Goal Tracking",
+    description: "Set season objectives for the team and monitor progress in real-time.",
+    icon: Target,
+    color: "text-purple-600",
+  },
+  {
+    title: "Instant Alerts",
+    description: "Send push notifications and email updates to players and parents instantly.",
+    icon: Zap,
+    color: "text-orange-600",
+  },
+  {
+    title: "Bank-Grade Security",
+    description: "Your data is encrypted and protected with enterprise-level security protocols.",
+    icon: Shield,
+    color: "text-red-600",
+  },
+];
 
-       <section className="bg-white px-4 py-16">
-         <div className="mx-auto max-w-6xl">
-           <div className="mb-12 text-center">
-             <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">Everything you need</h2>
-             <p className="mt-3 text-gray-600">A clean toolkit for managing operations and performance.</p>
-           </div>
+export default function Landing() {
+  return (
+    <div className="flex min-h-screen w-full flex-col font-sans">
+      
+      <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50">
+        <HeroSection />
+      </div>
 
-           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-             <Card className="transition-shadow hover:shadow-lg">
-               <CardHeader>
-                 <Users className="mb-3 h-10 w-10 text-blue-600" />
-                 <CardTitle>Team Management</CardTitle>
-                 <CardDescription>Player roster, profiles, and roles.</CardDescription>
-               </CardHeader>
-             </Card>
+      <StatsSection />
 
-             <Card className="transition-shadow hover:shadow-lg">
-               <CardHeader>
-                 <Calendar className="mb-3 h-10 w-10 text-green-600" />
-                 <CardTitle>Scheduling</CardTitle>
-                 <CardDescription>Matches, trainings, and events.</CardDescription>
-               </CardHeader>
-             </Card>
+      <section id="features" className="bg-white px-4 py-24 md:py-32">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+              Everything you need to <span className="text-blue-600">win</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
+              A complete toolkit designed to help coaches and managers focus on the game, not the paperwork.
+            </p>
+          </div>
 
-             <Card className="transition-shadow hover:shadow-lg">
-               <CardHeader>
-                 <Trophy className="mb-3 h-10 w-10 text-yellow-600" />
-                 <CardTitle>Stats &amp; Results</CardTitle>
-                 <CardDescription>Track performance and outcomes.</CardDescription>
-               </CardHeader>
-             </Card>
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature, index) => (
+              <FeaturedCard key={index} {...feature} />
+            ))}
+          </div>
+        </div>
+      </section>
 
-             <Card className="transition-shadow hover:shadow-lg">
-               <CardHeader>
-                 <Target className="mb-3 h-10 w-10 text-purple-600" />
-                 <CardTitle>Goals</CardTitle>
-                 <CardDescription>Set objectives and monitor progress.</CardDescription>
-               </CardHeader>
-             </Card>
+      <TestimonialsSection />
 
-             <Card className="transition-shadow hover:shadow-lg">
-               <CardHeader>
-                 <Zap className="mb-3 h-10 w-10 text-orange-600" />
-                 <CardTitle>Announcements</CardTitle>
-                 <CardDescription>Send updates to players and staff.</CardDescription>
-               </CardHeader>
-             </Card>
+      <CTASection />
 
-             <Card className="transition-shadow hover:shadow-lg">
-               <CardHeader>
-                 <Shield className="mb-3 h-10 w-10 text-red-600" />
-                 <CardTitle>Secure</CardTitle>
-                 <CardDescription>Keep team data safe and private.</CardDescription>
-               </CardHeader>
-             </Card>
-           </div>
-         </div>
-       </section>
-     </div>
-   );
- }
+      <Footer />
+    </div>
+  );
+}
