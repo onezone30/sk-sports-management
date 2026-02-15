@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Season extends Model
 {
     /** @use HasFactory<\Database\Factories\SeasonFactory> */
-    use HasFactory;
+    use HasApiTokens, HasFactory, Notifiable;
+
 
     protected $fillable = [
         'chairman_id', 
