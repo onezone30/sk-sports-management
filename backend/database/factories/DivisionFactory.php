@@ -19,6 +19,8 @@ class DivisionFactory extends Factory
     {
         return [
             'sport_id' => Sport::factory(),
+            'min_age' => $this->faker->numberBetween(10, 18),
+            'max_age' => $this->faker->numberBetween(19, 40),
             'name' => $this->faker->unique()->word() . ' Division',
         ];
     }
