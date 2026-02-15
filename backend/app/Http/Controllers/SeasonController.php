@@ -19,9 +19,10 @@ class SeasonController extends Controller
         $validatedData = $request->validate([
             'chairman_id' => 'required|integer|exists:users,id',
             'name' => 'required|string|max:255',
+            'year' => 'required|integer|digits:4',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'status' => 'required|boolean',
+            'status' => 'required',
         ]);
 
         $season = Season::create($validatedData);
@@ -51,9 +52,10 @@ class SeasonController extends Controller
         $validatedData = $request->validate([
             'chairman_id' => 'sometimes|required|integer|exists:users,id',
             'name' => 'sometimes|required|string|max:255',
+            'year' => 'sometimes|required|integer|digits:4',
             'start_date' => 'sometimes|required|date',
             'end_date' => 'sometimes|required|date|after_or_equal:start_date',
-            'status' => 'sometimes|required|boolean',
+            'status' => 'sometimes|required',
         ]);
 
         $season->update($validatedData);
