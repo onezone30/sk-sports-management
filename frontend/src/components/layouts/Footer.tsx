@@ -23,8 +23,8 @@ export default function Footer() {
                     © 2026 SK Sports Management. All rights reserved.
                 </p>
                 <div className="flex gap-6">
-                    {links.map((link) => (
-                        <Link key={link.href} to={link.href} className="text-sm font-medium text-slate-600 hover:text-blue-600">
+                    {links.map((link, index) => (
+                        <Link key={index} to={link.href} className="text-sm font-medium text-slate-600 hover:text-blue-600">
                             {link.label}
                         </Link>
                     ))}
