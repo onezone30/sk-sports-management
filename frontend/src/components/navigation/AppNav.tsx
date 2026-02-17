@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import {
     NavigationMenu,
@@ -8,6 +8,7 @@ import {
 } from "../ui/navigation-menu";
 
 import skLogo from '../../assets/sk_logo.png';
+import { useEffect, useState } from "react";
 
 
 const links = [
@@ -26,6 +27,23 @@ const links = [
 ]
 
 export default function AppNav() {
+    const [user, setUser] = useState<any>(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const user = localStorage.getItem('user');
+        if (user) {
+            setUser(JSON.parse(user));
+        }
+    }, []);
+    
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setUser(null);
+        navigate('/');
+    }
+
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur">
             <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
@@ -51,11 +69,17 @@ export default function AppNav() {
                     </NavigationMenuList>
                 </NavigationMenu>
 
-                <Link to="/login" className="flex items-center gap-2">
-                    <Button size="sm">
-                        Log In
+                { user ? (
+                    <Button onClick={handleLogout} size="sm" className="flex items-center gap-2">
+                        Log Out
                     </Button>
-                </Link>
+                ) : (
+                    <Link to="/login" className="flex items-center gap-2">
+                        <Button size="sm">
+                            Log In
+                        </Button>
+                    </Link>
+                )}
             </div>
         </header>
     );
