@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import {
     NavigationMenu,
@@ -8,7 +8,7 @@ import {
 } from "../ui/navigation-menu";
 
 import skLogo from '../../assets/sk_logo.png';
-import { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 
 const links = [
@@ -27,21 +27,10 @@ const links = [
 ]
 
 export default function AppNav() {
-    const [user, setUser] = useState<any>(null);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const user = localStorage.getItem('user');
-        if (user) {
-            setUser(JSON.parse(user));
-        }
-    }, []);
+    const { logout, user } = useAuth();
     
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
-        navigate('/');
+        logout();
     }
 
     return (
