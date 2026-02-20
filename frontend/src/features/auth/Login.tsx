@@ -9,10 +9,12 @@ import skLogo from "../../assets/sk_logo.png";
 import sk_background from '../../assets/SK_background.png';
 import Footer from "../../components/layouts/Footer";
 import api from "../../lib/axios";
+import { useAuth } from "../../hooks/useAuth";
 
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -34,10 +36,10 @@ export default function LoginPage() {
         setIsLoading(true);
         try {
             const response = await api.post("/login", formData);
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
+
+            console.log("Login successful:", response.data);
+            login(response.data.access_token, response.data.user);
             navigate('/dashboard');
-            console.log(response.data);
         } catch (error: any) {
             console.error(error);
             if(error.response && error.response.status === 401) {
