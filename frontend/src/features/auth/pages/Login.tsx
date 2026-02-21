@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
-import skLogo from "../../assets/sk_logo.png";
-import sk_background from '../../assets/SK_background.png';
-import Footer from "../../components/layouts/Footer";
-import api from "../../lib/axios";
-import { useAuth } from "../../hooks/useAuth";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../components/ui/card";
+import skLogo from '../../../assets/sk_logo.png';
+import sk_background from '../../../assets/SK_background.png';
+import Footer from "../../../components/layouts/Footer";
+import api from "../../../lib/axios";
+import { useAuth } from "../../../hooks/useAuth";
 
 
 export default function LoginPage() {
