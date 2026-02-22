@@ -1,12 +1,5 @@
 import { createContext, useEffect, useState, type ReactNode,  } from "react";
-
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    role_id: number;
-    permissions?: string[];
-}
+import type { User } from "../types/user";
 
 export interface AuthContextType {
     user: User | null;
