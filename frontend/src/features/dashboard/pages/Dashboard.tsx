@@ -1,18 +1,19 @@
-import { 
-    Users, 
-    Trophy, 
-    CalendarDays, 
-    Activity 
+import {
+    Users,
+    Trophy,
+    CalendarDays,
+    Activity
 } from "lucide-react";
 // ⚠️ Adjust these import paths based on your exact shadcn setup!
-import { 
-    Card, 
-    CardContent, 
-    CardDescription, 
-    CardHeader, 
-    CardTitle 
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle
 } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
+import PageHeader from "../../../components/shared/PageHeader";
 
 // --- Static Mock Data ---
 const stats = [
@@ -33,16 +34,11 @@ export default function Dashboard() {
     return (
         <div className="flex-1 space-y-6">
             {/* Page Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">Dashboard</h1>
-                    <p className="text-slate-500 mt-1">Welcome back. Here's what's happening in your league.</p>
-                </div>
-                <div className="flex gap-2">
-                    <Button variant="outline">View Schedule</Button>
-                    <Button>Create Game</Button>
-                </div>
-            </div>
+            <PageHeader
+                title="Dashboard"
+                description="Overview of league performance and recent activity">
+                <Button size="lg">View Schedule</Button>
+            </PageHeader>
 
             {/* Top Stats Grid */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
