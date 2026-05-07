@@ -1,0 +1,69 @@
+import { useEffect, useState } from "react";
+import PageHeader from "../../../components/shared/PageHeader";
+import { Button } from "../../../components/ui/button";
+import { DataTable } from "../../../components/shared/DataTable";
+import { columns } from "../columns";
+import api from "../../../services/api";
+import type { User as UserType } from "../../../types/user";
+import { Spinner } from "../../../components/ui/spinner";
+
+
+export default function User() {
+    const [users, setUsers] = useState<UserType[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            setIsLoading(true);
+            setError(null);
+
+            try {
+                const response = await api.get("/users");
+                const payload = response.data;
+
+                if (Array.isArray(payload)) {
+                    setUsers(payload);
+                } else if (Array.isArray(payload?.data)) {
+                    setUsers(payload.data);
+                } else {
+                    setUsers([]);
+                }
+            } catch (err) {
+                console.error(err);
+                setError("Failed to load users.");
+                setUsers([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
+    return (
+        <div className="flex-1 space-y-6">
+            {/* Page Header */}
+            <PageHeader 
+                title="User Profile"
+                description="Manage your account details and preferences">
+                <Button size="lg">Add User</Button>
+            </PageHeader>
+
+            {/* User Table */}
+            {error && (
+                <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {error}
+                </div>
+            )}
+
+            {isLoading ? (
+                <div className="flex h-48 items-center justify-center rounded-md border">
+                    <Spinner className="size-8" />
+                </div>
+            ) : (
+                <DataTable columns={columns} data={users} />
+            )}
+        </div>
+    );
+}

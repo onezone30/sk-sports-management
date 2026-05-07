@@ -7,6 +7,7 @@ import { PermissionGuard } from "./RoleGuard";
 import PublicLayout from "../components/layouts/PublicLayout";
 import ProtectedLayout from "../components/layouts/ProtectedLayout";
 import Dashboard from "../features/dashboard/pages/Dashboard";
+import User from "../features/users/pages/User";
 
 export default function AppRoutes() {
   return (
@@ -22,6 +23,7 @@ export default function AppRoutes() {
 
       <Route element={<ProtectedLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/users" element={<User />} />
       </Route>
 
 

@@ -23,6 +23,10 @@ const links = [
     {
         href: '/contact',
         label: 'Contact'
+    },
+    {
+        href: '/dashboard',
+        label: 'Dashboard'
     }
 ]
 
