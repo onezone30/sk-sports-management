@@ -2,37 +2,33 @@
 
 namespace Database\Seeders;
 
-use App\Enums\SportsType;
+use App\Enums\ActiveStatus;
 use App\Models\Season;
-use App\Models\Sport;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class SeasonSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $volleyball = Sport::where('name', SportsType::VOLLEYBALL)->first();
-        $basketball = Sport::where('name', SportsType::BASKETBALL)->first();
-        $handler = User::whereHas('role', fn($q) => $q->where('name', 'Admin'))->first();
+        $admin = User::whereHas('role', fn($q) => $q->where('name', 'Admin'))->first();
 
         Season::create([
-            'sport_id' => $volleyball->id,
-            'handler_id' => $handler->id,
-            'name' => '2026 Football Season',
+            'chairman_id' => $admin->id,
+            'name' => '2026 Volleyball Season',
             'year' => 2026,
-            'status' => 'active',
+            'start_date' => '2026-03-01',
+            'end_date' => '2026-08-31',
+            'status' => ActiveStatus::ACTIVE->value,
         ]);
 
         Season::create([
-            'sport_id' => $basketball->id,
-            'handler_id' => $handler->id,
+            'chairman_id' => $admin->id,
             'name' => '2026 Basketball Season',
             'year' => 2026,
-            'status' => 'active',
+            'start_date' => '2026-04-01',
+            'end_date' => '2026-09-30',
+            'status' => ActiveStatus::ACTIVE->value,
         ]);
     }
 }

@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Enums\ActiveStatus;
-use App\Models\Sport;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -12,16 +11,10 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class SeasonFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'sport_id' => Sport::factory(),
-            'handler_id' => User::factory(),
+            'chairman_id' => User::factory(),
             'name' => $this->faker->word() . ' Season',
             'year' => $this->faker->year(),
             'start_date' => $this->faker->dateTimeBetween('now', '+6 months'),
