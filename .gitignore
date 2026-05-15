@@ -6,6 +6,7 @@ frontend/.env
 # Ignore dependencies
 backend/vendor/
 frontend/node_modules/
+node_modules/
 
 # Ignore OS files
 .DS_Store
