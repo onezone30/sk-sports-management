@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import AppLayout from "./AppLayout";
 import Landing from "../features/public/pages/Landing";
 import Login from "../features/auth/pages/Login";
+import GitHubCallback from "../features/auth/pages/GitHubCallback";
 import Unauthorized from "../features/errors/pages/Unauthorized";
 import { PermissionGuard } from "./RoleGuard";
 import PublicLayout from "../components/layouts/PublicLayout";
@@ -18,6 +19,7 @@ export default function AppRoutes() {
         <Route path="/contact" element={<div>Contact Page Coming Soon</div>} />
         <Route path="/landing" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/auth/github/callback" element={<GitHubCallback />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
       </Route>
 
