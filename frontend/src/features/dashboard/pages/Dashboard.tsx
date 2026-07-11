@@ -4,16 +4,15 @@ import {
     CalendarDays,
     Activity
 } from "lucide-react";
-// ⚠️ Adjust these import paths based on your exact shadcn setup!
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle
-} from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
-import PageHeader from "../../../components/shared/PageHeader";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import PageHeader from "@/components/shared/PageHeader";
 
 // --- Static Mock Data ---
 const stats = [

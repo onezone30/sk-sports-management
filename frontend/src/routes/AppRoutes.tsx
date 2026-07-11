@@ -1,13 +1,11 @@
 import { Routes, Route } from "react-router-dom";
-import AppLayout from "./AppLayout";
-import Landing from "../features/public/pages/Landing";
-import Login from "../features/auth/pages/Login";
-import Unauthorized from "../features/errors/pages/Unauthorized";
-import { PermissionGuard } from "./RoleGuard";
-import PublicLayout from "../components/layouts/PublicLayout";
-import ProtectedLayout from "../components/layouts/ProtectedLayout";
-import Dashboard from "../features/dashboard/pages/Dashboard";
-import User from "../features/users/pages/User";
+import Landing from "@/features/landing/pages/Landing";
+import Login from "@/features/auth/pages/Login";
+import Unauthorized from "@/features/errors/pages/Unauthorized";
+import PublicLayout from "@/layouts/PublicLayout";
+import ProtectedLayout from "@/layouts/ProtectedLayout";
+import Dashboard from "@/features/dashboard/pages/Dashboard";
+import Users from "@/features/users/pages/Users";
 
 export default function AppRoutes() {
   return (
@@ -21,25 +19,24 @@ export default function AppRoutes() {
         <Route path="/unauthorized" element={<Unauthorized />} />
       </Route>
 
+      {/*
+        ProtectedLayout already redirects to /login when there's no signed-in user.
+        Wrap a route below in <PermissionGuard requiredPermissions={[...]}> once the
+        backend actually seeds `permissions` and assigns them per user/role — right now
+        the permissions table is empty and nothing enforces it server-side either
+        (see backend/CLAUDE.md's Implementation Status table), so gating on a made-up
+        permission name would just lock everyone out. Example, once that's ready:
+
+          <Route path="/users" element={
+            <PermissionGuard requiredPermissions={["users.view"]}>
+              <Users />
+            </PermissionGuard>
+          } />
+      */}
       <Route element={<ProtectedLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/users" element={<User />} />
+        <Route path="/users" element={<Users />} />
       </Route>
-
-
-      {/* Example: Permission-based route - user needs ANY of these permissions */}
-      {/* <Route path="/dashboard" element={
-          <PermissionGuard requiredPermissions={['view_dashboard', 'manage_dashboard']}>
-            <Dashboard />
-          </PermissionGuard>
-        } /> */}
-
-      {/* Example: Permission-based route - user needs ALL permissions */}
-      {/* <Route path="/admin" element={
-          <PermissionGuard requiredPermissions={['admin_access', 'manage_users']} requireAll={true}>
-            <AdminDashboard />
-          </PermissionGuard>
-        } /> */}
     </Routes>
   );
 }

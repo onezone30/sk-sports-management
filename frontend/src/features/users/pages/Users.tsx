@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import PageHeader from "../../../components/shared/PageHeader";
-import { Button } from "../../../components/ui/button";
-import { DataTable } from "../../../components/shared/DataTable";
+import PageHeader from "@/components/shared/PageHeader";
+import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/shared/DataTable";
 import { columns } from "../columns";
-import api from "../../../services/api";
-import type { User as UserType } from "../../../types/user";
-import { Spinner } from "../../../components/ui/spinner";
+import api from "@/services/api";
+import type { User as UserType } from "@/types/user";
+import { Spinner } from "@/components/ui/spinner";
 
 
-export default function User() {
+export default function Users() {
     const [users, setUsers] = useState<UserType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -45,8 +45,8 @@ export default function User() {
         <div className="flex-1 space-y-6">
             {/* Page Header */}
             <PageHeader 
-                title="User Profile"
-                description="Manage your account details and preferences">
+                title="Users"
+                description="Manage all system users">
                 <Button size="lg">Add User</Button>
             </PageHeader>
 

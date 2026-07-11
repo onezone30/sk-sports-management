@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import AppNav from "../navigation/AppNav";
+import AppNav from "@/components/navigation/AppNav";
 
 export default function PublicLayout() {
     return (

@@ -1,7 +1,23 @@
-import { Outlet } from "react-router-dom";
-import AppSidebar from "../navigation/AppSidebar";
+import { Navigate, Outlet } from "react-router-dom";
+import AppSidebar from "@/components/navigation/AppSidebar";
+import { Spinner } from "@/components/ui/spinner";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ProtectedLayout() {
+    const { user, isLoading } = useAuth();
+
+    if (isLoading) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <Spinner className="size-8" />
+            </div>
+        );
+    }
+
+    if (!user) {
+        return <Navigate to="/login" replace />;
+    }
+
     return (
         <div className="min-h-screen w-full bg-slate-50">
             <AppSidebar />

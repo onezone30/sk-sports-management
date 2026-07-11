@@ -1,18 +1,22 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import Loader from "../components/ui/loader";
+import { useAuth } from "@/hooks/useAuth";
+import { Spinner } from "@/components/ui/spinner";
 
 interface PermissionGuardProps {
     children: React.ReactNode;
     requiredPermissions: string[];
-    requireAll?: boolean; 
+    requireAll?: boolean;
 }
 
 export function PermissionGuard({ children, requiredPermissions, requireAll = false }: PermissionGuardProps) {
     const { user, isLoading, hasAnyPermission, hasAllPermissions } = useAuth();
 
     if (isLoading) {
-        <Loader />;
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <Spinner className="size-8" />
+            </div>
+        );
     }
 
     if (!user) {

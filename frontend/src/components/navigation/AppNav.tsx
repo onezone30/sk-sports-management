@@ -1,14 +1,13 @@
 import { Link } from "react-router-dom";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import {
     NavigationMenu,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-} from "../ui/navigation-menu";
-
-import skLogo from '../../assets/sk_logo.png';
-import { useAuth } from "../../hooks/useAuth";
+} from "@/components/ui/navigation-menu";
+import skLogo from "@/assets/sk_logo.png";
+import { useAuth } from "@/hooks/useAuth";
 
 
 const links = [

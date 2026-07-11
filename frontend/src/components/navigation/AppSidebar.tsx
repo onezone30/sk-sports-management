@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Home, User, LayoutDashboard, LogOut, Menu, X, LogIn } from "lucide-react";
-import skLogo from "../../assets/sk_logo.png";
-import { Button } from "../ui/button";
-import { useAuth } from "../../hooks/useAuth";
+import { User, LayoutDashboard, LogOut, Menu, X, LogIn } from "lucide-react";
+import skLogo from "@/assets/sk_logo.png";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 const links = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
