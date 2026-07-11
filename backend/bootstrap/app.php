@@ -17,5 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\App\Exceptions\UserNotFoundException $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        });
     })->create();
