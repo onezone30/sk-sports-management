@@ -1,0 +1,62 @@
+# =============================================================================
+# Claude Code GitHub Actions Workflow
+# =============================================================================
+#
+# WHAT THIS DOES:
+#   Runs Claude Code as a bot inside GitHub. Mention @claude in any PR comment,
+#   issue comment, or PR review and it will respond with code, fixes, or answers.
+#
+# SETUP (one-time):
+#   1. Get your Anthropic API key from https://console.anthropic.com
+#   2. Add it as a GitHub secret:
+#        gh secret set ANTHROPIC_API_KEY --repo onezone30/sk-sports-management
+#      Or go to: GitHub repo → Settings → Secrets → Actions → New repository secret
+#
+# HOW TO USE:
+#   In any PR comment, issue, or PR review, mention @claude followed by your request.
+#
+#   Examples:
+#     "@claude review this PR and point out any issues"
+#     "@claude the tests are failing, can you fix it?"
+#     "@claude refactor this controller to follow our existing patterns"
+#     "@claude what does this function do?"
+#     "@claude add input validation to this endpoint"
+#
+#   Claude can read your codebase and push commits directly to your branch.
+#
+# TRIGGERS:
+#   - Comments on issues
+#   - Comments on pull requests
+#   - Pull request reviews
+#   - New issues (if @claude is mentioned in the title or body)
+# =============================================================================
+
+name: Claude Code
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

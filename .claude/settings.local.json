@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Cesar\\\\Projects\\\\sk-sports-management\\\\backend\" -Directory)",
-      "Bash(Select-Object Name)",
-      "Bash(php artisan *)"
-    ]
-  }
-}

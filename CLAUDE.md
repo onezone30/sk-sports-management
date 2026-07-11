@@ -46,12 +46,16 @@ composer run setup   # install deps, copy .env, key:generate, migrate, npm insta
 
 Feature-driven structure:
 
-- **`features/`** — Domain modules (`auth`, `dashboard`, `users`, `public`). Each has `pages/` and optionally `components/`, `hooks/`, `columns.tsx`.
-- **`routes/AppRoutes.tsx`** — All route definitions. Public routes use `PublicLayout`; protected routes use `ProtectedLayout` (with sidebar). `RoleGuard` wraps permission-restricted routes.
-- **`providers/AuthProvider.tsx`** — Auth context: stores `user`, `token`, and `permissions` in `localStorage`. Exposes `login`, `logout`, and `hasPermission`.
+- **`features/`** — Domain modules (`auth`, `dashboard`, `errors`, `landing`, `users`). Each has `pages/` and optionally `components/`, `api/`, `columns.tsx`.
+- **`layouts/`** — `PublicLayout` (top nav) and `ProtectedLayout` (sidebar; also redirects signed-out users to `/login`).
+- **`routes/AppRoutes.tsx`** — All route definitions, grouped under `PublicLayout`/`ProtectedLayout`. `PermissionGuard` (in `routes/PermissionGuard.tsx`) wraps routes that need an additional per-permission check on top of the sign-in gate.
+- **`providers/AuthProvider.tsx`** — Auth context: stores `user`, `token`, and `permissions` in `localStorage`. Exposes `login`, `logout`, `hasPermission`, `hasAnyPermission`, `hasAllPermissions`.
 - **`services/api.ts`** — Central Axios instance. Reads `VITE_API_BASE_URL` from env. Request interceptor attaches Bearer token; response interceptor handles 401 by clearing auth and redirecting to `/login`.
 - **`components/ui/`** — Shadcn/Radix UI primitives (do not edit directly, use shadcn CLI to add new ones).
-- **`components/shared/`** — Shared project-level components (`DataTable`, `PageHeader`, `StatusBadge`).
+- **`components/shared/`** — Shared project-level components (`DataTable`, `PageHeader`, `StatusBadge`, `Footer`).
+- **`components/navigation/`** — `AppNav` (public top nav), `AppSidebar` (protected sidebar).
+
+See `frontend/CLAUDE.md` for the full folder-structure diagram, naming/import conventions, and the `frontend-components` / `frontend-feature` skills for code patterns.
 
 ### Backend (`backend/`)
 
@@ -72,7 +76,7 @@ Standard Laravel structure with API-only setup:
 
 ### RBAC
 
-Permissions are stored in the DB and assigned to roles (`Role → Permission` many-to-many via `permission_role`). The frontend checks permissions via `hasPermission()` from `useAuth()`, and gates routes with `RoleGuard`.
+Permissions are stored in the DB per-user (`permission_user`, the live table) with `permission_roles` as the default template per role — see `backend-rbac` skill for the source-of-truth model. The frontend checks permissions via `hasPermission()` from `useAuth()`, and can gate routes with `PermissionGuard`. Note: the backend doesn't seed or enforce any permissions yet, so no route is actually gated by one today — sign-in enforcement (`ProtectedLayout` redirecting to `/login`) is the only active guard.
 
 ---
 
