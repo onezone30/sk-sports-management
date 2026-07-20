@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
-import AppSidebar from "@/components/navigation/AppSidebar";
-import { Spinner } from "@/components/ui/spinner";
-import { useAuth } from "@/hooks/useAuth";
+import { AppSidebar } from "@/widgets/app-sidebar";
+import { Spinner } from "@/shared/ui/spinner";
+import { useAuth } from "@/features/auth";
 
 export default function ProtectedLayout() {
     const { user, isLoading } = useAuth();

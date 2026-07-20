@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { Spinner } from "@/components/ui/spinner";
+import { useAuth } from "@/features/auth";
+import { Spinner } from "@/shared/ui/spinner";
 
 interface PermissionGuardProps {
     children: React.ReactNode;

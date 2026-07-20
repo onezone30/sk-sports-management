@@ -7,6 +7,7 @@
 - Laravel Pint (code style — run `php artisan pint`)
 - SQLite (dev), MySQL/MariaDB (prod)
 - PHPUnit 11 (tests)
+- Env: `backend/.env` — SQLite DB path, Sanctum config, `APP_KEY`
 
 ---
 
@@ -68,7 +69,7 @@ app/
 ├── Exceptions/                          # Domain exceptions (extend Exception, not HttpException)
 ├── Http/
 │   ├── Controllers/                     # Thin controllers — HTTP only
-│   ├── Middleware/                      # CheckInactivity (alias: active), CheckPermission (alias: permission)
+│   ├── Middleware/                      # CheckInactivity (alias: active, logs out after 15 min idle), CheckPermission (alias: permission)
 │   ├── Requests/                        # Form Request classes (one per mutation action)
 │   └── Resources/                       # API Resource classes (one per model)
 ├── Listeners/                           # Event listeners (imperative names)
@@ -121,7 +122,7 @@ Terse rules only — see the `backend-layers` skill for code examples.
 
 **API Resources** — one per model. Define `toArray()` fields explicitly (never `parent::toArray()`). Responses wrapped in `data`.
 
-**Models** — data containers only. Always `$fillable` (never `$guarded = []`), `$casts` for enums/JSON/dates, all relationships explicit.
+**Models** — data containers only. Always `$fillable` (never `$guarded = []`), `$casts` for enums/JSON/dates, all relationships explicit. Key relationships: `User → Role → Permission` (RBAC), `Season → Sport → Division → Team → Player`.
 
 ---
 

@@ -10,9 +10,9 @@ import {
     CardDescription,
     CardHeader,
     CardTitle
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import PageHeader from "@/components/shared/PageHeader";
+} from "@/shared/ui/card";
+import { Button } from "@/shared/ui/button";
+import PageHeader from "@/shared/components/PageHeader";
 
 // --- Static Mock Data ---
 const stats = [

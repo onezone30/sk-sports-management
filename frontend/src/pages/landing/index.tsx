@@ -1,9 +1,11 @@
-import HeroSection from "../components/HeroSection";
-import StatsSection from "../components/StatsSection";
-import FeaturesSection from "../components/FeaturesSection";
-import TestimonialsSection from "../components/TestimonialSection";
-import CTASection from "../components/CTASection";
-import Footer from "@/components/shared/Footer";
+import {
+    HeroSection,
+    StatsSection,
+    FeaturesSection,
+    TestimonialsSection,
+    CTASection,
+} from "@/widgets/landing-sections";
+import { Footer } from "@/widgets/footer";
 
 export default function Landing() {
     return (

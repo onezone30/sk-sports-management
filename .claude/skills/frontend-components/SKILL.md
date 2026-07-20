@@ -5,15 +5,16 @@ description: Copy-paste examples for shared components, styling, API calls, and 
 
 # Frontend component patterns
 
-Concrete examples for the pieces every page reaches for. The *rules* are in `frontend/CLAUDE.md` — this is the "show me the code" companion.
+Concrete examples for the pieces every page reaches for. The *rules* — including the FSD layer/import rules — are in `frontend/CLAUDE.md`; this is the "show me the code" companion.
 
 ## Page skeleton
 
 Every protected page starts with `PageHeader`, then its content:
 
 ```tsx
-import PageHeader from "@/components/shared/PageHeader";
-import { Button } from "@/components/ui/button";
+// pages/teams/index.tsx
+import PageHeader from "@/shared/components/PageHeader";
+import { Button } from "@/shared/ui/button";
 
 export default function Teams() {
   return (
@@ -29,12 +30,12 @@ export default function Teams() {
 
 ## DataTable
 
-Generic TanStack Table wrapper. Define columns in `features/<name>/columns.tsx`, pass them with the data:
+Generic TanStack Table wrapper. Define columns colocated with the page that uses them (or in the feature that owns the data), pass them with the data:
 
 ```tsx
-// features/teams/columns.tsx
+// pages/teams/columns.tsx
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Team } from "@/types/team";
+import type { Team } from "@/entities/team";
 
 export const columns: ColumnDef<Team>[] = [
   { accessorKey: "id", header: "ID" },
@@ -43,9 +44,9 @@ export const columns: ColumnDef<Team>[] = [
 ```
 
 ```tsx
-// features/teams/pages/Teams.tsx
-import { DataTable } from "@/components/shared/DataTable";
-import { columns } from "../columns";
+// pages/teams/index.tsx
+import { DataTable } from "@/shared/components/DataTable";
+import { columns } from "./columns";
 
 <DataTable columns={columns} data={teams} />
 ```
@@ -55,7 +56,7 @@ import { columns } from "../columns";
 Maps a status string to a `Badge` variant — use for any status/state display instead of hand-rolling badge colors:
 
 ```tsx
-import StatusBadge from "@/components/shared/StatusBadge";
+import StatusBadge from "@/shared/components/StatusBadge";
 
 <StatusBadge status={team.status} /> // "Active" | "Pending" | "Inactive" | "Suspended" | ...
 ```
@@ -65,7 +66,7 @@ import StatusBadge from "@/components/shared/StatusBadge";
 The one loading primitive — don't reach for anything else:
 
 ```tsx
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@/shared/ui/spinner";
 
 {isLoading ? (
   <div className="flex h-48 items-center justify-center rounded-md border">
@@ -81,20 +82,20 @@ import { Spinner } from "@/components/ui/spinner";
 Compose conditional classes with `cn()` (clsx + tailwind-merge) instead of template-string concatenation. Use the semantic tokens from `src/index.css`, not hardcoded hex/OKLCH values:
 
 ```tsx
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 <Button className={cn("w-full", isActive && "bg-primary text-primary-foreground")}>
 ```
 
 ## API calls — React Query
 
-New pages should fetch through a colocated hook in `features/<name>/api/`, not inline `useState`/`useEffect` in the page component:
+New pages should fetch through a colocated hook (in the owning `features/<name>/model/` if it's tied to a specific action, or right next to the page if it's page-specific), not inline `useState`/`useEffect` in the page component:
 
 ```tsx
-// features/teams/api/useTeams.ts
+// features/teams/model/useTeams.ts
 import { useQuery } from "@tanstack/react-query";
-import api from "@/services/api";
-import type { Team } from "@/types/team";
+import api from "@/shared/api/client";
+import type { Team } from "@/entities/team";
 
 export function useTeams() {
   return useQuery({
@@ -108,18 +109,18 @@ export function useTeams() {
 ```
 
 ```tsx
-// features/teams/pages/Teams.tsx
+// pages/teams/index.tsx
 const { data: teams = [], isLoading } = useTeams();
 ```
 
-`features/users/pages/Users.tsx` still uses manual `useState`/`useEffect` — it's a known migration candidate (see frontend CLAUDE.md's Implementation Status), not the pattern to copy for new pages.
+`pages/users/index.tsx` still uses manual `useState`/`useEffect` — it's a known migration candidate (see frontend CLAUDE.md's Implementation Status), not the pattern to copy for new pages.
 
 ## Permission-gated UI
 
 Gate a button or section with `hasPermission()` from `useAuth()` — this is independent of route-level gating:
 
 ```tsx
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/features/auth";
 
 const { hasPermission } = useAuth();
 
@@ -128,7 +129,7 @@ const { hasPermission } = useAuth();
 )}
 ```
 
-Route-level gating (`<PermissionGuard requiredPermissions={[...]}>`) is a separate, heavier tool — see the Auth & Permissions section of `frontend/CLAUDE.md` for when it's actually safe to wire in (the backend must seed and enforce the permission first).
+Route-level gating (`<PermissionGuard requiredPermissions={[...]}>`, from `@/app/routes/PermissionGuard`) is a separate, heavier tool — see the Auth & Permissions section of `frontend/CLAUDE.md` for when it's actually safe to wire in (the backend must seed and enforce the permission first).
 
 ## Adding a shadcn primitive
 
@@ -136,4 +137,4 @@ Route-level gating (`<PermissionGuard requiredPermissions={[...]}>`) is a separa
 npx shadcn@latest add <component>
 ```
 
-Lands in `src/components/ui/`. Never hand-edit a generated file — if it's missing a variant, add it via the CLI's config or wrap it in a `components/shared/` component instead.
+Lands in `src/shared/ui/` (per the aliases in `components.json`). Never hand-edit a generated file — if it's missing a variant, add it via the CLI's config or wrap it in a `shared/components/` component instead.

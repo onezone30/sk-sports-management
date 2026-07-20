@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { User, LayoutDashboard, LogOut, Menu, X, LogIn } from "lucide-react";
-import skLogo from "@/assets/sk_logo.png";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
+import skLogo from "@/shared/assets/sk_logo.png";
+import { Button } from "@/shared/ui/button";
+import { useAuth } from "@/features/auth";
 
 const links = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/users", label: "Users", icon: User },
 ];
 
-export default function AppSidebar() {
+export function AppSidebar() {
     const [open, setOpen] = useState(false);
     const { user, logout } = useAuth();
     const location = useLocation();

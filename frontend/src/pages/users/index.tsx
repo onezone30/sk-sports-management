@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import PageHeader from "@/components/shared/PageHeader";
-import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/shared/DataTable";
-import { columns } from "../columns";
-import api from "@/services/api";
-import type { User as UserType } from "@/types/user";
-import { Spinner } from "@/components/ui/spinner";
+import PageHeader from "@/shared/components/PageHeader";
+import { Button } from "@/shared/ui/button";
+import { DataTable } from "@/shared/components/DataTable";
+import { columns } from "./columns";
+import api from "@/shared/api/client";
+import type { User as UserType } from "@/entities/user";
+import { Spinner } from "@/shared/ui/spinner";
 
 
 export default function Users() {

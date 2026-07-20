@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
     NavigationMenu,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import skLogo from "@/assets/sk_logo.png";
-import { useAuth } from "@/hooks/useAuth";
+} from "@/shared/ui/navigation-menu";
+import skLogo from "@/shared/assets/sk_logo.png";
+import { useAuth } from "@/features/auth";
 
 
 const links = [
@@ -29,7 +29,7 @@ const links = [
     }
 ]
 
-export default function AppNav() {
+export function AppNav() {
     const { logout, user } = useAuth();
     
     const handleLogout = () => {

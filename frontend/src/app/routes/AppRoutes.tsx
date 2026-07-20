@@ -1,11 +1,11 @@
 import { Routes, Route } from "react-router-dom";
-import Landing from "@/features/landing/pages/Landing";
-import Login from "@/features/auth/pages/Login";
-import Unauthorized from "@/features/errors/pages/Unauthorized";
-import PublicLayout from "@/layouts/PublicLayout";
-import ProtectedLayout from "@/layouts/ProtectedLayout";
-import Dashboard from "@/features/dashboard/pages/Dashboard";
-import Users from "@/features/users/pages/Users";
+import Landing from "@/pages/landing";
+import Login from "@/pages/login";
+import Unauthorized from "@/pages/unauthorized";
+import PublicLayout from "@/app/layouts/PublicLayout";
+import ProtectedLayout from "@/app/layouts/ProtectedLayout";
+import Dashboard from "@/pages/dashboard";
+import Users from "@/pages/users";
 
 export default function AppRoutes() {
   return (

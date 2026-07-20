@@ -1,4 +1,4 @@
-import heroImage from "@/assets/SK_background.png";
+import heroImage from "@/shared/assets/SK_background.png";
 
 export default function HeroSection() {
     return (

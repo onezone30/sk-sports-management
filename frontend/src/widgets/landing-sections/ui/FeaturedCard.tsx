@@ -1,4 +1,4 @@
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import type { LucideIcon } from "lucide-react";
 
 export type FeatureVariant = "blue" | "green" | "yellow" | "purple" | "orange" | "red";

@@ -8,6 +8,7 @@
 - TanStack React Query (configured, not yet adopted by any page)
 - TanStack React Table (via `DataTable`)
 - Path alias: `@` → `src/` (configured in both `vite.config.ts` and `tsconfig.app.json`)
+- Env: `frontend/.env` — set `VITE_API_BASE_URL=http://localhost:8000/api`
 
 ---
 
@@ -25,18 +26,30 @@ This file holds the always-true rules. Depth and code examples live in on-demand
 
 ## Architecture
 
-Feature-based structure: one folder per domain, self-contained.
+**Feature-Sliced Design (FSD).** Code is organized into layers, each one only allowed to import from the layers *below* it:
 
-**Colocation rule:**
-> Used by only one feature? → it lives in that feature (`features/<name>/`). Used across features, or by app infrastructure (routing, auth)? → it lives at top level.
+```
+app  →  pages  →  widgets  →  features  →  entities  →  shared
+(top, most composed)                              (bottom, most foundational)
+```
 
-Example: `User` stays in the global `types/`, not `features/users/`, because `AuthProvider` (a global provider) needs it for the signed-in principal — a global provider importing from a feature would invert the dependency direction.
+- `shared` never imports from any other layer.
+- `entities` may import `shared`.
+- `features` may import `entities`, `shared`.
+- `widgets` may import `features`, `entities`, `shared`.
+- `pages` may import `widgets`, `features`, `entities`, `shared`.
+- `app` may import everything below it.
+
+A lower layer must never import from a higher one (e.g. `shared/ui/button.tsx` must never import from `features/`). This is the rule to check first when unsure where new code belongs.
+
+**Slices and public APIs:** within `entities/`, `features/`, and `widgets/`, each named folder (a "slice" — e.g. `entities/user`, `features/auth`, `widgets/app-nav`) exposes exactly one `index.ts` (or `index.tsx`) as its public API. Code outside the slice imports only from that `index.ts` — never reaches into `model/` or `ui/` directly. `pages/`, `shared/`, and `app/` are not sliced this way — `shared/ui/`, `shared/components/`, etc. are imported directly since there's no cross-slice boundary to protect there.
 
 **Hard rules:**
-- Always import cross-boundary with the `@/` alias — never `../../`. Relative imports are only for intra-feature imports (a page importing its own feature-local component).
-- Never edit `components/ui/` by hand — it's shadcn-generated. Use the CLI (see below).
-- Never import `axios` directly — always go through `@/services/api`.
-- Never read `localStorage` directly — always go through `AuthProvider` / `useAuth()`.
+- Always import cross-boundary with the `@/` alias — never `../../`. Relative imports are only for imports *within* the same slice (e.g. `features/auth/ui/LoginForm.tsx` importing `../model/useAuth`).
+- Never edit `shared/ui/` by hand — it's shadcn-generated. Use the CLI (see below).
+- Never import `axios` directly — always go through `@/shared/api/client`.
+- Never read `localStorage` directly — always go through `AuthProvider` / `useAuth()` (`@/features/auth`).
+- Before adding code, decide its layer: a reusable, business-agnostic primitive (a button, `cn()`, the Axios instance) → `shared`. A real-world object your app deals with (User) → `entities`. One user action (logging in) → `features`. A large composed UI block used by more than one page (the sidebar, a set of landing-page sections) → `widgets`. A route, thin and mostly composing the above → `pages`. Composition root (providers, router, layouts) → `app`.
 
 ---
 
@@ -44,30 +57,42 @@ Example: `User` stays in the global `types/`, not `features/users/`, because `Au
 
 ```
 src/
-├── features/<domain>/       # self-contained feature modules
-│   ├── pages/               # route-level components
-│   ├── components/          # feature-local components
-│   ├── api/                 # feature-local data hooks (React Query), once adopted
-│   ├── columns.tsx          # React Table column defs (colocated here)
-│   └── types.ts             # feature-local types (only what's not shared)
-├── components/
-│   ├── ui/                  # shadcn primitives — DO NOT edit directly
-│   ├── shared/               # reusable project components (DataTable, PageHeader, StatusBadge, Footer)
-│   └── navigation/           # AppNav (public), AppSidebar (protected)
-├── layouts/                 # PublicLayout, ProtectedLayout — one per route group
-├── services/api.ts          # single Axios instance — all API calls go here
-├── providers/AuthProvider.tsx
-├── hooks/                   # global custom hooks (useAuth.ts, etc.)
-├── lib/utils.ts             # cn() and other framework-agnostic helpers
-├── types/                   # shared TypeScript interfaces (.ts, not .tsx)
-└── routes/                  # AppRoutes.tsx, PermissionGuard.tsx — routing logic only
+├── main.tsx                  # Vite entry point
+├── app/                       # composition root
+│   ├── App.tsx
+│   ├── providers/             # AppProviders — QueryClientProvider, AuthProvider, BrowserRouter
+│   ├── routes/                # AppRoutes.tsx, PermissionGuard.tsx
+│   └── layouts/                # PublicLayout, ProtectedLayout — one per route group
+├── pages/<route-name>/        # one folder per route, index.tsx composes widgets/features/entities
+│   └── index.tsx
+├── widgets/<name>/             # large reusable UI blocks assembled from features/entities/shared
+│   ├── ui/
+│   └── index.ts                # public API
+├── features/<name>/            # one user action each (e.g. auth)
+│   ├── model/                  # hooks, context, business logic
+│   ├── ui/                     # feature-local components (e.g. LoginForm)
+│   └── index.ts                 # public API
+├── entities/<name>/             # business objects (e.g. user)
+│   ├── model/                   # types, small display logic
+│   └── index.ts                  # public API
+└── shared/                       # generic, business-agnostic code
+    ├── ui/                        # shadcn primitives — DO NOT edit directly
+    ├── components/                 # reusable project components (DataTable, PageHeader, StatusBadge)
+    ├── api/client.ts                # single Axios instance — all API calls go here
+    ├── lib/utils.ts                  # cn() and other framework-agnostic helpers
+    ├── hooks/                         # generic, business-agnostic hooks (shadcn CLI target)
+    └── assets/                         # images, logos
 ```
 
-**Adding a new feature:** create `features/<name>/pages/` and optionally `components/`, `api/`, `columns.tsx`. Register the route in `AppRoutes.tsx`. See `/new-feature-frontend` for the full scaffold.
+**Adding a new feature:** create `features/<name>/model/` and `features/<name>/ui/`, then a `features/<name>/index.ts` that exports only what other layers should use. Add a `pages/<route-name>/index.tsx` that composes it, and register the route in `app/routes/AppRoutes.tsx`. See `/new-feature-frontend` for the full scaffold.
 
-**Error / utility pages with no domain logic** still live in their own feature folder (e.g. `features/errors/pages/Unauthorized.tsx`) — there is no separate top-level `pages/` folder.
+**Error / utility pages with no domain logic** still get their own `pages/<name>/index.tsx` (e.g. `pages/unauthorized/index.tsx`) — there is no separate "errors" feature.
 
-**Current features:** `auth`, `dashboard`, `errors`, `landing`, `users`
+**Current slices:**
+- `entities`: `user`
+- `features`: `auth`
+- `widgets`: `app-nav`, `app-sidebar`, `footer`, `landing-sections`
+- `pages`: `landing`, `login`, `dashboard`, `users`, `unauthorized`
 
 ---
 
@@ -77,19 +102,19 @@ src/
 |---|---|---|
 | Components | PascalCase | `UserTable.tsx` |
 | Hooks | camelCase, `use` prefix | `useAuth.ts` |
-| Utilities / services | camelCase | `api.ts`, `utils.ts` |
-| Feature folders | camelCase | `features/users/` |
+| Utilities / services | camelCase | `client.ts`, `utils.ts` |
+| Slice/page folders | kebab-case (single word stays lowercase) | `widgets/app-nav/`, `features/auth/` |
 | Interfaces | PascalCase | `export interface User` |
 
 - Use `.tsx` only for files that contain JSX. Use `.ts` for hooks, types, utilities, and services.
-- Export components as `export default function ComponentName()` — no `React.FC`.
+- Export components as `export default function ComponentName()` for page/layout entry points; use named exports (`export function ComponentName()`) for anything re-exported through a slice's `index.ts` — no `React.FC`.
 - Define prop types inline as `interface ComponentNameProps`.
 
 ---
 
 ## Styling Rules
 
-- Use Tailwind utility classes. Compose with `cn()` from `@/lib/utils` when class logic is conditional.
+- Use Tailwind utility classes. Compose with `cn()` from `@/shared/lib/utils` when class logic is conditional.
 - Do not write custom CSS unless absolutely necessary.
 - Custom brand colors are CSS variables in `src/index.css` (OKLCH-based): primary = blue (main actions), secondary = yellow (highlights/CTAs), destructive = red (delete/error).
 - Dark mode via CSS variable overrides — use semantic color tokens, not hardcoded colors.
@@ -99,19 +124,20 @@ src/
 
 ## API Calls
 
-All requests go through `src/services/api.ts`. It attaches `Authorization: Bearer <token>` from localStorage automatically and handles 401 by clearing auth state and redirecting to `/login`.
+All requests go through `src/shared/api/client.ts`. It attaches `Authorization: Bearer <token>` from localStorage automatically and handles 401 by clearing auth state and redirecting to `/login`.
 
-Prefer React Query (`useQuery`/`useMutation`) for new pages over manual `useState` + `useEffect` — the client is already wired up in `App.tsx`, just not yet used anywhere (see Implementation Status).
+Prefer React Query (`useQuery`/`useMutation`) for new pages over manual `useState` + `useEffect` — the client is already wired up in `app/providers/index.tsx`, just not yet used anywhere (see Implementation Status).
 
 ---
 
 ## Auth & Permissions
 
-- Use `useAuth()` from `@/hooks/useAuth` for `user`, `token`, `isLoading`, `hasPermission()`, `hasAnyPermission()`, `hasAllPermissions()`.
+- Use `useAuth()` from `@/features/auth` for `user`, `token`, `isLoading`, `hasPermission()`, `hasAnyPermission()`, `hasAllPermissions()`.
 - Gate UI elements with `hasPermission("permission.name")`.
-- Gate routes with `<PermissionGuard requiredPermissions={[...]} requireAll?>` from `@/routes/PermissionGuard` — it redirects to `/login` if signed out, `/unauthorized` if the permission check fails.
+- Gate routes with `<PermissionGuard requiredPermissions={[...]} requireAll?>` from `@/app/routes/PermissionGuard` — it redirects to `/login` if signed out, `/unauthorized` if the permission check fails.
 - `ProtectedLayout` already redirects signed-out users to `/login` for every route in that group — `PermissionGuard` is for an *additional*, per-route permission check on top of that.
 - Don't invent permission-name strings to gate a route — the backend doesn't seed or enforce any yet (see backend's Implementation Status). Check with the backend before wiring a real one in.
+- The `User` type lives in `entities/user`; the auth context/provider/hook live in `features/auth` (not `entities/user`) because they're the stateful "session" mechanism, not just the data shape — everything above `features` (widgets, pages, app) is allowed to import from it.
 
 ---
 
@@ -131,7 +157,7 @@ Use the CLI — do not write shadcn components from scratch:
 npx shadcn@latest add <component>
 ```
 
-This places the component in `src/components/ui/`. Do not modify generated files unless absolutely necessary.
+`components.json` aliases point the CLI at `src/shared/ui/`, `src/shared/components/`, `src/shared/lib/`, and `src/shared/hooks/`. Do not modify generated files unless absolutely necessary.
 
 ---
 
