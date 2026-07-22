@@ -42,6 +42,8 @@ app  →  pages  →  widgets  →  features  →  entities  →  shared
 
 A lower layer must never import from a higher one (e.g. `shared/ui/button.tsx` must never import from `features/`). This is the rule to check first when unsure where new code belongs.
 
+These import rules are enforced, not just documented: `npm run lint:arch` (Steiger) fails the build on a wrong-direction import — see `frontend/steiger.config.ts` for the project-specific rule tuning.
+
 **Slices and public APIs:** within `entities/`, `features/`, and `widgets/`, each named folder (a "slice" — e.g. `entities/user`, `features/auth`, `widgets/app-nav`) exposes exactly one `index.ts` (or `index.tsx`) as its public API. Code outside the slice imports only from that `index.ts` — never reaches into `model/` or `ui/` directly. `pages/`, `shared/`, and `app/` are not sliced this way — `shared/ui/`, `shared/components/`, etc. are imported directly since there's no cross-slice boundary to protect there.
 
 **Hard rules:**
