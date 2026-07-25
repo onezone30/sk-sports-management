@@ -1,63 +1,58 @@
-import { Users, Calendar, Trophy, Target, Zap, Shield } from "lucide-react";
+import { Layers, Users, CalendarClock, Trophy, TrendingUp, Shield } from "lucide-react";
 import FeaturedCard from "./FeaturedCard";
-import type { FeatureVariant } from "./FeaturedCard";
 
-const features: { title: string; description: string; icon: typeof Users; variant: FeatureVariant }[] = [
+const features: { title: string; description: string; icon: typeof Users }[] = [
     {
-        title: "Team Management",
-        description: "Effortlessly manage player rosters, profiles, and staff roles in one central database.",
+        title: "Seasons & Divisions",
+        description: "Set up a season, choose which sports are in play, and organize each one into divisions by age or skill level.",
+        icon: Layers,
+    },
+    {
+        title: "Team Rosters",
+        description: "Register teams and players, and keep jersey numbers, captains, and active status current for everyone.",
         icon: Users,
-        variant: "blue",
     },
     {
-        title: "Smart Scheduling",
-        description: "Coordinate matches, trainings, and team events with automated conflict detection.",
-        icon: Calendar,
-        variant: "green",
+        title: "Game Scheduling",
+        description: "Schedule games per division and track each one from scheduled to finished.",
+        icon: CalendarClock,
     },
     {
-        title: "Stats & Analytics",
-        description: "Track player performance, match outcomes, and generate professional reports.",
+        title: "Stats Per Sport",
+        description: "Track the numbers that matter for each sport — points and rebounds, or kills and assists.",
         icon: Trophy,
-        variant: "yellow",
     },
     {
-        title: "Goal Tracking",
-        description: "Set season objectives for the team and monitor progress in real-time.",
-        icon: Target,
-        variant: "purple",
+        title: "Automatic Standings",
+        description: "Rankings update themselves the moment a result comes in. Nobody recalculates a table by hand.",
+        icon: TrendingUp,
     },
     {
-        title: "Instant Alerts",
-        description: "Send push notifications and email updates to players and parents instantly.",
-        icon: Zap,
-        variant: "orange",
-    },
-    {
-        title: "Bank-Grade Security",
-        description: "Your data is encrypted and protected with enterprise-level security protocols.",
+        title: "Role-Based Access",
+        description: "Chairmen, handlers, players, and the public each see exactly what's relevant to them — same data, no drift.",
         icon: Shield,
-        variant: "red",
     },
 ];
 
 export default function FeaturesSection() {
     return (
-        <section id="features" className="bg-slate-50 px-4 py-24 md:py-32">
-            <div className="mx-auto max-w-6xl">
-                <div className="mb-16 text-center">
-                    <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-blue-600">Features</p>
-                    <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-                        Everything you need to <span className="text-blue-600">win</span>
+        <section id="features" className="border-b border-border bg-background px-6 py-24 md:py-32">
+            <div className="mx-auto max-w-5xl">
+                <div className="mb-16 max-w-2xl">
+                    <p className="mb-3 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                        Index
+                    </p>
+                    <h2 className="font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                        Everything a season needs
                     </h2>
-                    <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-500">
-                        A complete toolkit designed to help coaches and managers focus on the game, not the paperwork.
+                    <p className="mt-4 font-sans text-lg text-muted-foreground">
+                        From setting up the competition to the final standings — one system, start to finish.
                     </p>
                 </div>
 
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="border-t border-border">
                     {features.map((feature, index) => (
-                        <FeaturedCard key={index} {...feature} />
+                        <FeaturedCard key={feature.title} index={index + 1} {...feature} />
                     ))}
                 </div>
             </div>

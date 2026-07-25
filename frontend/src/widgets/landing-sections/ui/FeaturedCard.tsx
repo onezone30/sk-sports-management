@@ -1,38 +1,28 @@
-import { Card, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import type { LucideIcon } from "lucide-react";
 
-export type FeatureVariant = "blue" | "green" | "yellow" | "purple" | "orange" | "red";
-
-const variantStyles: Record<FeatureVariant, { iconBg: string; iconColor: string; accentBg: string }> = {
-    blue:   { iconBg: "bg-blue-50",   iconColor: "text-blue-600",   accentBg: "bg-blue-500"   },
-    green:  { iconBg: "bg-green-50",  iconColor: "text-green-600",  accentBg: "bg-green-500"  },
-    yellow: { iconBg: "bg-yellow-50", iconColor: "text-yellow-600", accentBg: "bg-yellow-500" },
-    purple: { iconBg: "bg-purple-50", iconColor: "text-purple-600", accentBg: "bg-purple-500" },
-    orange: { iconBg: "bg-orange-50", iconColor: "text-orange-600", accentBg: "bg-orange-500" },
-    red:    { iconBg: "bg-red-50",    iconColor: "text-red-600",    accentBg: "bg-red-500"    },
-};
-
 interface FeaturedCardProps {
+    index: number;
     title: string;
     description: string;
     icon: LucideIcon;
-    variant: FeatureVariant;
 }
 
-export default function FeaturedCard({ title, description, icon: Icon, variant }: FeaturedCardProps) {
-    const styles = variantStyles[variant];
+export default function FeaturedCard({ index, title, description, icon: Icon }: FeaturedCardProps) {
     return (
-        <Card className="group relative overflow-hidden border-slate-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-            <div className={`absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100 ${styles.accentBg}`} />
-            <CardHeader>
-                <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl ${styles.iconBg} ${styles.iconColor}`}>
-                    <Icon className="h-6 w-6" />
-                </div>
-                <CardTitle className="text-lg font-bold text-slate-900">{title}</CardTitle>
-                <CardDescription className="pt-1 text-sm leading-relaxed text-slate-500">
-                    {description}
-                </CardDescription>
-            </CardHeader>
-        </Card>
+        <div className="group grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-2 border-b border-border py-8 last:border-b-0 md:grid-cols-[3rem_1fr_2fr] md:items-center">
+            <span className="font-display text-sm font-bold text-muted-foreground">
+                {String(index).padStart(2, "0")}
+            </span>
+
+            <h3 className="flex items-center gap-3 font-display text-xl font-bold text-foreground md:text-2xl">
+                <Icon className="h-5 w-5 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" aria-hidden="true" />
+                {title}
+                <span className="ml-1 inline-block h-2 w-2 scale-0 rounded-full bg-secondary transition-transform group-hover:scale-100" />
+            </h3>
+
+            <p className="col-span-2 font-sans text-sm leading-relaxed text-muted-foreground md:col-span-1">
+                {description}
+            </p>
+        </div>
     );
 }

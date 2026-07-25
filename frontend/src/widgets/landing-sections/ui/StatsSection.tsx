@@ -1,23 +1,25 @@
 const stats = [
-    { label: "Active Teams",       value: "500+",  description: "Across all divisions" },
-    { label: "Matches Scheduled",  value: "10k+",  description: "Every season"         },
-    { label: "Players Managed",    value: "25k+",  description: "And counting"          },
-    { label: "Hours Saved",        value: "100k+", description: "Per year, per club"    },
+    { label: "Sports supported", value: "5+", description: "Basketball to chess, one system" },
+    { label: "Roles",            value: "4",  description: "Chairman, handler, player, public" },
+    { label: "Source of truth",  value: "1",  description: "No drifting spreadsheets" },
+    { label: "Manual standings", value: "0",  description: "Calculated the moment a result is in" },
 ];
 
 export default function StatsSection() {
     return (
-        <section className="border-y border-slate-200 bg-white py-16">
-            <div className="mx-auto max-w-6xl px-4">
-                <p className="mb-10 text-center text-sm font-semibold uppercase tracking-widest text-blue-600">
-                    By the numbers
+        <section className="border-b border-border bg-background py-16">
+            <div className="mx-auto max-w-5xl px-6">
+                <p className="mb-10 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                    What's inside
                 </p>
-                <div className="grid grid-cols-2 divide-y divide-slate-100 md:grid-cols-4 md:divide-x md:divide-y-0">
+                <div className="grid grid-cols-2 divide-y divide-border md:grid-cols-4 md:divide-x md:divide-y-0">
                     {stats.map((stat, index) => (
-                        <div key={index} className="px-8 py-4 text-center">
-                            <div className="text-4xl font-extrabold text-slate-900 md:text-5xl">{stat.value}</div>
-                            <div className="mt-1 text-sm font-semibold text-slate-700">{stat.label}</div>
-                            <div className="mt-0.5 text-xs text-slate-400">{stat.description}</div>
+                        <div key={index} className="px-2 py-6 first:pl-0 md:px-8">
+                            <div className="font-display text-4xl font-extrabold tabular-nums text-foreground md:text-5xl">
+                                {stat.value}
+                            </div>
+                            <div className="mt-2 font-sans text-sm font-semibold text-foreground">{stat.label}</div>
+                            <div className="mt-0.5 font-sans text-xs text-muted-foreground">{stat.description}</div>
                         </div>
                     ))}
                 </div>

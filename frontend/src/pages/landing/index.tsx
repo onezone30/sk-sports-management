@@ -2,7 +2,7 @@ import {
     HeroSection,
     StatsSection,
     FeaturesSection,
-    TestimonialsSection,
+    AudienceSection,
     CTASection,
 } from "@/widgets/landing-sections";
 import { Footer } from "@/widgets/footer";
@@ -13,7 +13,7 @@ export default function Landing() {
             <HeroSection />
             <StatsSection />
             <FeaturesSection />
-            <TestimonialsSection />
+            <AudienceSection />
             <CTASection />
             <Footer />
         </div>
