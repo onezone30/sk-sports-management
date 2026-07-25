@@ -4,8 +4,6 @@ import { Loader2, Lock, Mail } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/ui/card";
-import skLogo from "@/shared/assets/sk_logo.png";
 import api from "@/shared/api/client";
 import { useAuth } from "../model/useAuth";
 
@@ -55,85 +53,74 @@ export function LoginForm() {
     }
 
     return (
-        <Card className="z-10 w-full max-w-md border-slate-200 bg-white/95 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-white/80">
-            <CardHeader className="space-y-1 text-center">
+        <div className="w-full max-w-sm">
+            <p className="font-sans text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Sign in
+            </p>
+            <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground">
+                Welcome back
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+                Enter your credentials to access your dashboard
+            </p>
 
-                <div className="flex justify-center mb-4">
-                    <div className="rounded-full bg-white p-3 shadow-md">
-                        <img src={skLogo} alt="SK Sports" className="h-12 w-auto" />
+            <form onSubmit={handleLogin} className="mt-8 grid gap-4">
+                {error && (
+                    <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
+                        {error}
+                    </div>
+                )}
+
+                <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <div className="relative">
+                        <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            id="email"
+                            placeholder="coach@sksports.com"
+                            type="email"
+                            autoCapitalize="none"
+                            autoComplete="email"
+                            autoCorrect="off"
+                            className="px-10"
+                            required
+                            value={formData.email}
+                            onChange={handleChange}
+                        />
                     </div>
                 </div>
 
-                <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">
-                    Welcome back
-                </CardTitle>
-                <CardDescription className="text-slate-500">
-                    Enter your credentials to access your dashboard
-                </CardDescription>
-            </CardHeader>
+                <div className="grid gap-2">
+                    <Label htmlFor="password">Password</Label>
+                    <div className="relative">
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
 
-            <form onSubmit={handleLogin}>
-                <CardContent className="grid gap-4">
-                    {error && (
-                        <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
-                            {error}
-                        </div>
-                    )}
+                        <Input
+                            id="password"
+                            type="password"
+                            className="px-10"
+                            required
+                            value={formData.password}
+                            onChange={handleChange}
+                        />
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Email</Label>
-                        <div className="relative">
-                            <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                            <Input
-                                id="email"
-                                placeholder="coach@sksports.com"
-                                type="email"
-                                autoCapitalize="none"
-                                autoComplete="email"
-                                autoCorrect="off"
-                                className="px-10 border-slate-500"
-                                required
-                                value={formData.email}
-                                onChange={handleChange}
-                            />
-                        </div>
                     </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
-                        <div className="relative">
-                            <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-
-                            <Input
-                                id="password"
-                                type="password"
-                                className="px-10 border-slate-500"
-                                required
-                                value={formData.password}
-                                onChange={handleChange}
-                            />
-
-                        </div>
-
-                        <div className="flex justify-end">
-                            <Link
-                                to="/forgot-password"
-                                className="text-xs font-medium text-blue-600 hover:text-blue-500 hover:underline"
-                            >
-                                Forgot password?
-                            </Link>
-                        </div>
+                    <div className="flex justify-end">
+                        <Link
+                            to="/forgot-password"
+                            className="text-xs font-medium text-primary hover:underline"
+                        >
+                            Forgot password?
+                        </Link>
                     </div>
+                </div>
 
-                </CardContent>
-
-                <CardFooter className="flex flex-col gap-4 mt-5">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-500" disabled={isLoading}>
-                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Sign In
-                    </Button>
-                </CardFooter>
+                <Button className="mt-4 w-full" disabled={isLoading}>
+                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Sign In
+                </Button>
             </form>
-        </Card>
+        </div>
     );
 }

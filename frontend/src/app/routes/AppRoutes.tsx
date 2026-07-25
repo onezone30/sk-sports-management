@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Landing from "@/pages/landing";
 import Login from "@/pages/login";
-import Unauthorized from "@/pages/unauthorized";
+import Unauthorized from "@/pages/errors/Unauthorized";
 import PublicLayout from "@/app/layouts/PublicLayout";
 import ProtectedLayout from "@/app/layouts/ProtectedLayout";
 import Dashboard from "@/pages/dashboard";
