@@ -1,59 +1,58 @@
-import { useEffect, useState } from "react";
-import PageHeader from "@/shared/components/PageHeader";
+import { useState } from "react";
 import { Button } from "@/shared/ui/button";
 import { DataTable } from "@/shared/components/DataTable";
-import { columns } from "./columns";
-import api from "@/shared/api/client";
+import { createColumns } from "./columns";
+import { UserFormModal, DeleteUserDialog, useUsers } from "@/features/users";
 import type { User as UserType } from "@/entities/user";
 import { Spinner } from "@/shared/ui/spinner";
 
+import PageHeader from "@/shared/components/PageHeader";
+
+
 
 export default function Users() {
-    const [users, setUsers] = useState<UserType[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { data: users = [], isLoading, error } = useUsers();
+    const [editingUser, setEditingUser] = useState<UserType | null>(null);
+    const [deletingUser, setDeletingUser] = useState<UserType | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            setIsLoading(true);
-            setError(null);
+    const openCreateModal = () => {
+        setEditingUser(null);
+        setIsModalOpen(true);
+    };
 
-            try {
-                const response = await api.get("/users");
-                const payload = response.data;
+    const openEditModal = (user: UserType) => {
+        setEditingUser(user);
+        setIsModalOpen(true);
+    };
 
-                if (Array.isArray(payload)) {
-                    setUsers(payload);
-                } else if (Array.isArray(payload?.data)) {
-                    setUsers(payload.data);
-                } else {
-                    setUsers([]);
-                }
-            } catch (err) {
-                console.error(err);
-                setError("Failed to load users.");
-                setUsers([]);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    const openDeleteDialog = (user: UserType) => {
+        setDeletingUser(user);
+        setIsDeleteOpen(true);
+    };
 
-        fetchUsers();
-    }, []);
+    const handleSuccess = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleDeleteSuccess = () => {
+        setIsDeleteOpen(false);
+    };
 
     return (
         <div className="flex-1 space-y-6">
             {/* Page Header */}
-            <PageHeader 
+            <PageHeader
                 title="Users"
                 description="Manage all system users">
-                <Button size="lg">Add User</Button>
+                <Button size="lg" onClick={openCreateModal}>Add User</Button>
             </PageHeader>
 
             {/* User Table */}
             {error && (
                 <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                    {error}
+                    Failed to load users.
                 </div>
             )}
 
@@ -62,8 +61,22 @@ export default function Users() {
                     <Spinner className="size-8" />
                 </div>
             ) : (
-                <DataTable columns={columns} data={users} />
+                <DataTable columns={createColumns(openEditModal, openDeleteDialog)} data={users} />
             )}
+
+            <UserFormModal
+                open={isModalOpen}
+                onOpenChange={setIsModalOpen}
+                user={editingUser}
+                onSuccess={handleSuccess}
+            />
+
+            <DeleteUserDialog
+                open={isDeleteOpen}
+                onOpenChange={setIsDeleteOpen}
+                user={deletingUser}
+                onSuccess={handleDeleteSuccess}
+            />
         </div>
     );
 }

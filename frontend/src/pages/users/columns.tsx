@@ -1,7 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import { Button } from "@/shared/ui/button";
 import type { User } from "@/entities/user";
 
-export const columns: ColumnDef<User>[] = [
+export const createColumns = (
+    onEdit: (user: User) => void,
+    onDelete: (user: User) => void,
+): ColumnDef<User>[] => [
     {
         accessorKey: "id",
         header: "ID",
@@ -15,33 +19,22 @@ export const columns: ColumnDef<User>[] = [
         header: "Email",
     },
     {
-        accessorKey: "role_id",
+        id: "role",
+        accessorFn: (row) => row.role?.name ?? "—",
         header: "Role",
     },
     {
-        accessorKey: "permissions",
-        header: "Permissions",
-        cell: ({ row }) => {
-            const permissions = row.getValue("permissions") as string[] | undefined;
-
-            if(!permissions || permissions.length === 0) {
-                return <span className="text-muted-foreground text-xs italic">No permissions</span>
-
-            }
-
-            return (
-                <div className="flex flex-wrap gap-1">
-                    {permissions.map((permission) => (
-                        <span 
-                            key={permission} 
-                            className="bg-gray-200 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded"
-                        >
-                            {permission}
-                        </span>
-                    ))}
-                </div>
-            )
-
-        }
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => (
+            <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => onEdit(row.original)}>
+                    Edit
+                </Button>
+                <Button variant="destructive" size="sm" onClick={() => onDelete(row.original)}>
+                    Delete
+                </Button>
+            </div>
+        ),
     },
 ]

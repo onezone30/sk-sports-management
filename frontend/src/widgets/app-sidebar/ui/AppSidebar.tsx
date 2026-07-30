@@ -48,12 +48,14 @@ export function AppSidebar() {
                 className={`fixed inset-y-0 left-0 z-50 w-72 border-r bg-white shadow-xl transition-transform duration-300 md:translate-x-0 md:shadow-none ${open ? "translate-x-0" : "-translate-x-full"
                     }`}
             >
-                <div className="flex h-16 items-center justify-between border-b px-4">
-                    <div className="flex items-center gap-2">
+                <div className="flex h-16 items-center border-b px-4">
+                    <div className="size-9 md:hidden" aria-hidden="true" />
+
+                    <div className="flex flex-1 justify-center items-center gap-2">
                         <Link to="/" className="flex items-center gap-2" onClick={closeSidebar}>
                             <img src={skLogo} alt="SK Sports Logo" className="h-9 w-auto object-contain" />
                         </Link>
-                        <span className="text-lg font-bold text-slate-900">Barangay</span>
+                        {/* <span className="text-lg font-bold text-slate-900">Barangay</span> */}
                     </div>
 
                     <Button variant="ghost" size="icon" className="md:hidden" onClick={closeSidebar} aria-label="Close sidebar menu">
