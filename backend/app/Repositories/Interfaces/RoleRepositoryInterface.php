@@ -2,18 +2,18 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\User;
+use App\Models\Role;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-interface UserRepositoryInterface
+interface RoleRepositoryInterface
 {
     public function findAll(int $perPage = 25): LengthAwarePaginator;
 
-    public function findById(int $id): ?User;
+    public function findById(int $id): ?Role;
 
-    public function create(array $data): User;
+    public function create(array $data): Role;
 
-    public function update(int $id, array $data): User;
+    public function update(int $id, array $data): Role;
 
     public function delete(int $id): void;
 }

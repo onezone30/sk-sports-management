@@ -20,13 +20,16 @@ class EloquentUserRepository implements UserRepositoryInterface
 
     public function create(array $data): User
     {
-        return User::create($data);
+        // refresh() so DB column defaults (e.g. status) are reflected on the
+        // returned model even when the caller didn't pass them explicitly.
+        return User::create($data)->refresh();
     }
 
     public function update(int $id, array $data): User
     {
         $user = User::findOrFail($id);
         $user->update($data);
+
         return $user->load('role');
     }
 
