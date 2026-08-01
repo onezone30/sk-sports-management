@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +21,7 @@ class PlayerFactory extends Factory
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
             'date_of_birth' => $this->faker->dateTimeBetween('-40 years', '-15 years'),
-            'status' => ActiveStatus::ACTIVE->value,
+            'status' => Status::ACTIVE->value,
         ];
     }
 }

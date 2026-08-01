@@ -25,7 +25,8 @@ Public. No token required. Rate-limited to 5 attempts/minute per IP (`throttle:5
   "user": {
     "id": 1, "name": "...", "email": "...",
     "role": { "id": 1, "name": "Admin" },
-    "status": "active", "created_at": "2026-07-31 10:22:00"
+    "status": { "value": "active", "label": "Active", "variant": "default" },
+    "created_at": "2026-07-31 10:22:00"
   },
   "access_token": "<sanctum-token>",
   "token_type": "Bearer"
@@ -64,6 +65,10 @@ additionally require `role:Admin` — a temporary stopgap until real permission
 checks land (see backend's Implementation Status). A non-Admin gets **403**.
 
 All routes accept both `PUT` and `PATCH` for updates (Laravel `apiResource` registers both); examples below use `PATCH`.
+
+Request bodies take `status` as a plain string (see below). Responses (and the
+`/login` response above) return it as an object — `{ "value": "active", "label": "Active",
+"variant": "default" }` — so the frontend doesn't need its own value → label/badge mapping.
 
 | Method | Path | Description | Access |
 |--------|------|-------------|--------|

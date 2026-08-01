@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\ActiveStatus;
 use App\Exceptions\InactiveAccountException;
 use App\Exceptions\InvalidCredentialsException;
 use App\Models\User;
@@ -22,7 +21,7 @@ class AuthService
         /** @var User $user */
         $user = Auth::user();
 
-        if ($user->status !== ActiveStatus::ACTIVE) {
+        if (! $user->status?->isActive()) {
             Auth::logout();
             throw new InactiveAccountException;
         }

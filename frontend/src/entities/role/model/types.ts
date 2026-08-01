@@ -1,6 +1,8 @@
+import type { Status } from "@/shared/components/StatusBadge";
+
 export interface Role {
     id: number;
     name: string;
     description?: string | null;
-    status?: "active" | "inactive" | "archived" | "done";
+    status?: Status | null;
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Status;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(Role::class)
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->string('status')->default('active');
+            $table->string('status')->default(Status::ACTIVE->value);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

@@ -1,24 +1,18 @@
 import { Badge } from "@/shared/ui/badge";
 
-interface StatusBadgeProps {
-    status: string;
+export type BadgeVariant = "default" | "secondary" | "outline" | "destructive";
+
+/** Mirrors App\Enums\Status on the backend. */
+export interface Status {
+    value: string;
+    label: string;
+    variant: BadgeVariant;
 }
 
-
-// Keys match the lowercase values the API emits (see ActiveStatus enum on the backend).
-const statusConfig: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
-    active: "default",
-    inactive: "outline",
-    archived: "secondary",
-    done: "default",
-};
+interface StatusBadgeProps {
+    status: Status;
+}
 
 export default function StatusBadge({ status }: StatusBadgeProps) {
-    const variant = statusConfig[status] || "default";
-
-    return (
-        <Badge variant={variant} className="capitalize">
-            {status}
-        </Badge>
-    );
+    return <Badge variant={status.variant}>{status.label}</Badge>;
 }

@@ -143,7 +143,7 @@ All enums in `app/Enums/`. Always cast enum columns in the model.
 
 | Enum | Values | Used on |
 |---|---|---|
-| `ActiveStatus` | `active \| inactive \| archived \| done` | User, Role, Season, Sport, Division, Player |
+| `Status` | `active \| inactive \| archived \| done` | User, Role, Season, Sport, Division, Player |
 | `SportsType` | `basketball \| volleyball \| mobile_legends \| chess \| badminton` | Sport |
 | `TeamStatus` | `active \| pending \| verified \| suspended \| disqualified \| withdrawn` | Team |
 

@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use App\Models\Player;
 use App\Models\Team;
 use Illuminate\Database\Migrations\Migration;
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('jersey_number')->nullable();
             $table->string('position')->nullable();
             $table->boolean('is_captain')->default(false);
-            $table->string('status')->default(ActiveStatus::ACTIVE->value);
+            $table->string('status')->default(Status::ACTIVE->value);
             $table->unique(['player_id', 'team_id']);
             $table->timestamps();
         });

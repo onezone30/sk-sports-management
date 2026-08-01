@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Enums\ActiveStatus;
 use App\Enums\SportsType;
+use App\Enums\Status;
 use App\Models\Season;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,7 +21,7 @@ class SportFactory extends Factory
             'name' => $type->value,
             'category' => $type->category(),
             'max_players_per_team' => $this->faker->numberBetween(2, 15),
-            'status' => ActiveStatus::ACTIVE->value,
+            'status' => Status::ACTIVE->value,
         ];
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use App\Models\Division;
 use App\Models\Game;
 use App\Models\Venue;
@@ -27,7 +27,7 @@ class GameSeeder extends Seeder
                 'venue_id' => $venues->random()->id,
                 'home_score' => 0,
                 'away_score' => 0,
-                'status' => ActiveStatus::INACTIVE->value,
+                'status' => Status::INACTIVE->value,
                 'scheduled_at' => now()->addDays(rand(7, 60)),
             ]);
 
@@ -37,7 +37,7 @@ class GameSeeder extends Seeder
                 'venue_id' => $venues->random()->id,
                 'home_score' => 0,
                 'away_score' => 0,
-                'status' => ActiveStatus::INACTIVE->value,
+                'status' => Status::INACTIVE->value,
                 'scheduled_at' => now()->addDays(rand(61, 120)),
             ]);
         }

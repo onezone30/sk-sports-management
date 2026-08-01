@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use App\Traits\HasPermissions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,7 +35,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'status' => ActiveStatus::class,
+            'status' => Status::class,
         ];
     }
 

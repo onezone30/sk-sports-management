@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -20,7 +20,7 @@ class UpdateRoleRequest extends FormRequest
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255', "unique:roles,name,{$roleId}"],
             'description' => ['nullable', 'string'],
-            'status' => ['sometimes', 'required', Rule::enum(ActiveStatus::class)],
+            'status' => ['sometimes', 'required', Rule::enum(Status::class)],
         ];
     }
 }

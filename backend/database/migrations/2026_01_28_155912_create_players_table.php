@@ -1,8 +1,6 @@
 <?php
 
-use App\Enums\ActiveStatus;
-use App\Models\Sport;
-use App\Models\Team;
+use App\Enums\Status;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,7 +17,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->date('date_of_birth');
-            $table->string('status')->default(ActiveStatus::ACTIVE->value);
+            $table->string('status')->default(Status::ACTIVE->value);
             $table->timestamps();
         });
     }

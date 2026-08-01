@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use App\Models\Team;
 use App\Models\Venue;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,7 +20,7 @@ class GameFactory extends Factory
             'venue_id' => Venue::factory(),
             'home_score' => $this->faker->numberBetween(0, 5),
             'away_score' => $this->faker->numberBetween(0, 5),
-            'status' => ActiveStatus::INACTIVE->value,
+            'status' => Status::INACTIVE->value,
             'scheduled_at' => $this->faker->dateTimeBetween('now', '+3 months'),
         ];
     }

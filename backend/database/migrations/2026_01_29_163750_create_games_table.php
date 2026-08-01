@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use App\Models\Player;
 use App\Models\Team;
 use App\Models\Venue;
@@ -33,7 +33,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->integer('home_score')->default(0);
             $table->integer('away_score')->default(0);
-            $table->string('status')->default(ActiveStatus::INACTIVE->value);
+            $table->string('status')->default(Status::INACTIVE->value);
             $table->dateTime('scheduled_at');
             $table->timestamps();
         });

@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use App\Models\Sport;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('min_age');
             $table->integer('max_age');
             $table->string('gender_requirement')->nullable();
-            $table->string('status')->default(ActiveStatus::ACTIVE->value);
+            $table->string('status')->default(Status::ACTIVE->value);
             $table->timestamps();
         });
     }

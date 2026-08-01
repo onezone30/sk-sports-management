@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Enums\ActiveStatus;
 use App\Enums\SportsType;
+use App\Enums\Status;
 use App\Models\Season;
 use App\Models\Sport;
 use Illuminate\Database\Seeder;
@@ -20,7 +20,7 @@ class SportSeeder extends Seeder
             'name' => SportsType::VOLLEYBALL,
             'category' => SportsType::VOLLEYBALL->category(),
             'max_players_per_team' => 6,
-            'status' => ActiveStatus::ACTIVE->value,
+            'status' => Status::ACTIVE->value,
         ]);
 
         Sport::create([
@@ -28,7 +28,7 @@ class SportSeeder extends Seeder
             'name' => SportsType::BASKETBALL,
             'category' => SportsType::BASKETBALL->category(),
             'max_players_per_team' => 5,
-            'status' => ActiveStatus::ACTIVE->value,
+            'status' => Status::ACTIVE->value,
         ]);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -44,7 +44,7 @@ class AuthControllerTest extends TestCase
 
     public function test_login_rejects_inactive_user(): void
     {
-        $user = $this->makeUser(['password' => 'password123', 'status' => ActiveStatus::INACTIVE]);
+        $user = $this->makeUser(['password' => 'password123', 'status' => Status::INACTIVE]);
 
         $response = $this->postJson('/api/login', [
             'email' => $user->email,

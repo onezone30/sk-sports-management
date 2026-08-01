@@ -32,7 +32,7 @@ class RoleControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'data' => ['*' => ['id', 'name', 'description', 'status', 'created_at']],
+                'data' => ['*' => ['id', 'name', 'description', 'status' => ['value', 'label', 'variant'], 'created_at']],
                 'links',
                 'meta',
             ]);
@@ -55,7 +55,7 @@ class RoleControllerTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonPath('data.name', 'Referee')
-            ->assertJsonPath('data.status', 'active');
+            ->assertJsonPath('data.status.value', 'active');
 
         $this->assertDatabaseHas('roles', ['name' => 'Referee']);
     }
@@ -122,7 +122,7 @@ class RoleControllerTest extends TestCase
             ->patchJson("/api/roles/{$role->id}", ['status' => 'inactive']);
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.status', 'inactive');
+            ->assertJsonPath('data.status.value', 'inactive');
 
         $this->assertDatabaseHas('roles', ['id' => $role->id, 'status' => 'inactive']);
     }

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,7 +20,7 @@ class RoleFactory extends Factory
         return [
             'name' => $this->faker->jobTitle(),
             'description' => $this->faker->sentence(),
-            'status' => ActiveStatus::ACTIVE->value,
+            'status' => Status::ACTIVE->value,
         ];
     }
 }

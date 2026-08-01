@@ -40,7 +40,7 @@ class UserControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
-                    '*' => ['id', 'name', 'email', 'status', 'created_at'],
+                    '*' => ['id', 'name', 'email', 'status' => ['value', 'label', 'variant'], 'created_at'],
                 ],
                 'links',
                 'meta',
@@ -69,7 +69,7 @@ class UserControllerTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonPath('data.name', 'Juan dela Cruz')
             ->assertJsonPath('data.email', 'juan@example.com')
-            ->assertJsonStructure(['data' => ['id', 'name', 'email', 'role', 'status', 'created_at']]);
+            ->assertJsonStructure(['data' => ['id', 'name', 'email', 'role', 'status' => ['value', 'label', 'variant'], 'created_at']]);
 
         $this->assertDatabaseHas('users', ['email' => 'juan@example.com']);
     }
@@ -124,7 +124,7 @@ class UserControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('data.id', $user->id)
-            ->assertJsonStructure(['data' => ['id', 'name', 'email', 'role', 'status', 'created_at']]);
+            ->assertJsonStructure(['data' => ['id', 'name', 'email', 'role', 'status' => ['value', 'label', 'variant'], 'created_at']]);
     }
 
     public function test_show_returns_404_for_nonexistent_user(): void

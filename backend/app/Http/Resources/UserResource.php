@@ -17,7 +17,7 @@ class UserResource extends JsonResource
                 'id' => $this->role->id,
                 'name' => $this->role->name,
             ]),
-            'status' => $this->status?->value,
+            'status' => $this->status?->toArray(),
             'created_at' => $this->created_at->toDateTimeString(),
         ];
     }

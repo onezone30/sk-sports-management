@@ -192,7 +192,7 @@ Unique constraint on `(player_id, team_id)` — a player can appear in multiple 
 
 ---
 
-## Status Values (ActiveStatus enum)
+## Status Values (Status enum)
 
 | Value | Meaning |
 |-------|---------|

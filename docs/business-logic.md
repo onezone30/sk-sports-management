@@ -28,7 +28,7 @@ Don't mix them up. A Chairman sets up the competition. A Handler runs a team wit
 
 ## Game Status Values
 
-Games use `ActiveStatus` but only two values are meaningful:
+Games use `Status` but only two values are meaningful:
 
 | Status | Meaning |
 |--------|---------|

@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->year('year');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->string('status')->default(ActiveStatus::ACTIVE->value);
+            $table->string('status')->default(Status::ACTIVE->value);
             $table->timestamps();
         });
     }

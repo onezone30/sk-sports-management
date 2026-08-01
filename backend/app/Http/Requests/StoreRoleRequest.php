@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ActiveStatus;
+use App\Enums\Status;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -18,7 +18,7 @@ class StoreRoleRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255', 'unique:roles'],
             'description' => ['nullable', 'string'],
-            'status' => ['sometimes', 'required', Rule::enum(ActiveStatus::class)],
+            'status' => ['sometimes', 'required', Rule::enum(Status::class)],
         ];
     }
 }

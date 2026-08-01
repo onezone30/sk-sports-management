@@ -13,7 +13,7 @@ class RoleResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'status' => $this->status?->value,
+            'status' => $this->status?->toArray(),
             'created_at' => $this->created_at->toDateTimeString(),
         ];
     }
