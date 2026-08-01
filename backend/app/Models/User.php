@@ -34,8 +34,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'status'            => ActiveStatus::class,
+            'password' => 'hashed',
+            'status' => ActiveStatus::class,
         ];
     }
 
@@ -46,7 +46,7 @@ class User extends Authenticatable
 
     public function permissions(): BelongsToMany
     {
-        return $this->belongsToMany(Permission::class, 'permission_user');
+        return $this->belongsToMany(Permission::class, 'permission_user')->withTimestamps();
     }
 
     public function teamsAsHandler(): HasMany
