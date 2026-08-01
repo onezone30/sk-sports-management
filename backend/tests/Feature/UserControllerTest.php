@@ -12,6 +12,9 @@ class UserControllerTest extends TestCase
     use RefreshDatabase;
 
     private Role $role;
+
+    private Role $adminRole;
+
     private User $actingUser;
 
     protected function setUp(): void
@@ -19,7 +22,10 @@ class UserControllerTest extends TestCase
         parent::setUp();
 
         $this->role = Role::factory()->create(['name' => 'Player']);
-        $this->actingUser = User::factory()->create();
+        $this->adminRole = Role::factory()->create(['name' => 'Admin']);
+        // Mutating endpoints are Admin-only (see EnsureRole middleware) — this
+        // class tests CRUD behavior, not authorization, so the actor is an Admin.
+        $this->actingUser = User::factory()->create(['role_id' => $this->adminRole->id]);
     }
 
     // --- index ---
@@ -51,10 +57,10 @@ class UserControllerTest extends TestCase
     public function test_store_creates_user_and_returns_201(): void
     {
         $payload = [
-            'name'     => 'Juan dela Cruz',
-            'email'    => 'juan@example.com',
+            'name' => 'Juan dela Cruz',
+            'email' => 'juan@example.com',
             'password' => 'password123',
-            'role_id'  => $this->role->id,
+            'role_id' => $this->role->id,
         ];
 
         $response = $this->actingAs($this->actingUser, 'sanctum')
@@ -74,10 +80,10 @@ class UserControllerTest extends TestCase
 
         $response = $this->actingAs($this->actingUser, 'sanctum')
             ->postJson('/api/users', [
-                'name'     => 'Someone',
-                'email'    => 'taken@example.com',
+                'name' => 'Someone',
+                'email' => 'taken@example.com',
                 'password' => 'password123',
-                'role_id'  => $this->role->id,
+                'role_id' => $this->role->id,
             ]);
 
         $response->assertStatus(422)
@@ -97,10 +103,10 @@ class UserControllerTest extends TestCase
     {
         $response = $this->actingAs($this->actingUser, 'sanctum')
             ->postJson('/api/users', [
-                'name'     => 'Someone',
-                'email'    => 'someone@example.com',
+                'name' => 'Someone',
+                'email' => 'someone@example.com',
                 'password' => 'password123',
-                'role_id'  => 99999,
+                'role_id' => 99999,
             ]);
 
         $response->assertStatus(422)
@@ -170,5 +176,32 @@ class UserControllerTest extends TestCase
         $this->actingAs($this->actingUser, 'sanctum')
             ->deleteJson('/api/users/99999')
             ->assertStatus(404);
+    }
+
+    // --- authorization ---
+
+    public function test_non_admin_cannot_escalate_their_own_role(): void
+    {
+        $spectatorRole = Role::factory()->create(['name' => 'Spectator']);
+        $nonAdmin = User::factory()->create(['role_id' => $spectatorRole->id]);
+
+        $this->actingAs($nonAdmin, 'sanctum')
+            ->patchJson("/api/users/{$nonAdmin->id}", ['role_id' => $this->adminRole->id])
+            ->assertStatus(403);
+
+        $this->assertDatabaseHas('users', ['id' => $nonAdmin->id, 'role_id' => $spectatorRole->id]);
+    }
+
+    public function test_non_admin_cannot_delete_a_user(): void
+    {
+        $spectatorRole = Role::factory()->create(['name' => 'Spectator']);
+        $nonAdmin = User::factory()->create(['role_id' => $spectatorRole->id]);
+        $target = User::factory()->create();
+
+        $this->actingAs($nonAdmin, 'sanctum')
+            ->deleteJson("/api/users/{$target->id}")
+            ->assertStatus(403);
+
+        $this->assertDatabaseHas('users', ['id' => $target->id]);
     }
 }
