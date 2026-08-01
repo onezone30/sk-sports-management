@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ActiveStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -16,11 +18,11 @@ class UpdateUserRequest extends FormRequest
         $userId = $this->route('user')?->id;
 
         return [
-            'name'     => ['sometimes', 'required', 'string', 'max:255'],
-            'email'    => ['sometimes', 'required', 'email', "unique:users,email,{$userId}"],
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'email' => ['sometimes', 'required', 'email', "unique:users,email,{$userId}"],
             'password' => ['sometimes', 'required', 'string', 'min:8'],
-            'role_id'  => ['sometimes', 'required', 'exists:roles,id'],
-            'status'   => ['sometimes', 'required', 'in:active,inactive,archived,done'],
+            'role_id' => ['sometimes', 'required', 'exists:roles,id'],
+            'status' => ['sometimes', 'required', Rule::enum(ActiveStatus::class)],
         ];
     }
 }
