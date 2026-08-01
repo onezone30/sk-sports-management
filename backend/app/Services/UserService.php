@@ -2,11 +2,9 @@
 
 namespace App\Services;
 
-use App\Exceptions\UserNotFoundException;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
@@ -17,28 +15,14 @@ class UserService
         return $this->userRepo->findAll($perPage);
     }
 
-    public function findById(int $id): User
-    {
-        $user = $this->userRepo->findById($id);
-
-        if (!$user) {
-            throw new UserNotFoundException($id);
-        }
-
-        return $user;
-    }
-
     public function create(array $data): User
     {
-        $data['password'] = Hash::make($data['password']);
+        // Password hashing is handled by the `hashed` cast on User::casts().
         return $this->userRepo->create($data);
     }
 
     public function update(User $user, array $data): User
     {
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        }
         return $this->userRepo->update($user->id, $data);
     }
 
