@@ -2,41 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Resources\UserResource;
+use App\Services\AuthService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function __construct(private readonly AuthService $authService) {}
+
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
-        // Use Auth::attempt or the auth() helper
-        if (!Auth::attempt($credentials)) {
-            return response()->json([
-                'message' => 'Invalid login details'
-            ], 401);
-        }
-
-        $user = Auth::user();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $result = $this->authService->login($request->validated());
 
         return response()->json([
-            'user' => $user, // Send user data back for React state
-            'access_token' => $token,
+            'user' => new UserResource($result['user']),
+            'access_token' => $result['token'],
             'token_type' => 'Bearer',
         ]);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        $this->authService->logout($request->user());
 
         return response()->json([
-            'message' => 'Successfully logged out'
+            'message' => 'Successfully logged out',
         ]);
     }
 }

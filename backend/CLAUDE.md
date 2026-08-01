@@ -69,7 +69,7 @@ app/
 ├── Exceptions/                          # Domain exceptions (extend Exception, not HttpException)
 ├── Http/
 │   ├── Controllers/                     # Thin controllers — HTTP only
-│   ├── Middleware/                      # CheckInactivity (alias: active, logs out after 15 min idle), CheckPermission (alias: permission)
+│   ├── Middleware/                      # CheckInactivity (alias: active, logs out after 15 min idle), EnsureRole (alias: role, temporary Admin-only gate), CheckPermission (alias: permission — not built yet, see Implementation Status)
 │   ├── Requests/                        # Form Request classes (one per mutation action)
 │   └── Resources/                       # API Resource classes (one per model)
 ├── Listeners/                           # Event listeners (imperative names)
@@ -171,12 +171,12 @@ php artisan test --filter UserTest      # run a single test class
 
 | Area | Status |
 |---|---|
-| Auth (login/logout) | Complete |
-| Users | Complete (needs refactor to new pattern) |
-| Roles | Complete (needs refactor to new pattern) |
+| Auth (login/logout) | Complete — layered (`LoginRequest` + `AuthService`), rate-limited, rejects inactive accounts |
+| Users | Complete, layered |
+| Roles | Complete, layered (refactored to match Users) |
 | Seasons | Complete (needs refactor to new pattern) |
 | Sports | Complete (needs refactor to new pattern) |
 | Divisions | Complete (needs refactor to new pattern) |
 | Teams | Controller exists — **routes not registered** |
 | Players | Controller is empty — **not implemented** |
-| Permission enforcement on routes | Permissions exist in DB — **not enforced yet** |
+| Permission enforcement on routes | Permissions exist in DB — **still not enforced**. `store`/`update`/`destroy` on `users` and `roles` are gated by `EnsureRole` (alias `role`, e.g. `role:Admin`) as a temporary stopgap — swap for the `permission` middleware once the permission tables are seeded (see `backend-rbac` skill). |

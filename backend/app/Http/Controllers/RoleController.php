@@ -2,86 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
+use App\Http\Resources\RoleResource;
 use App\Models\Role;
-use Illuminate\Http\Request;
+use App\Services\RoleService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class RoleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $roles = Role::all();
+    public function __construct(private readonly RoleService $roleService) {}
 
-        return response()->json($roles, 200);
+    public function index(): AnonymousResourceCollection
+    {
+        return RoleResource::collection($this->roleService->getAll());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreRoleRequest $request): JsonResponse
     {
-        $validate = $request->validate([
-            'name' => 'required|string|max:255|unique:roles',
-            'description' => 'nullable|string',
-            'status' => 'string',
-        ]);
+        $role = $this->roleService->create($request->validated());
 
-        $role = Role::create($validate);
-
-        return response()->json($role, 201);
+        return (new RoleResource($role))->response()->setStatusCode(201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Role $role): RoleResource
     {
-        $role = Role::find($id);
-
-        if (!$role) {
-            return response()->json(['message' => 'Role not found'], 404);
-        }
-
-        return response()->json($role, 200);
+        return new RoleResource($role);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(UpdateRoleRequest $request, Role $role): RoleResource
     {
-        $role = Role::find($id);
-
-        if (!$role) {
-            return response()->json(['message' => 'Role not found'], 404);
-        }
-
-        $validate = $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $id,
-            'description' => 'nullable|string',
-            'status' => 'required|boolean',
-        ]);
-
-        $role->update($validate);
-
-        return response()->json($role, 200);
+        return new RoleResource($this->roleService->update($role, $request->validated()));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Role $role): JsonResponse
     {
-        $role = Role::find($id);
+        $this->roleService->delete($role);
 
-        if (!$role) {
-            return response()->json(['message' => 'Role not found'], 404);
-        }
-
-        $role->delete();
-
-        return response()->json(['message' => 'Role deleted successfully'], 200);
+        return response()->json(['message' => 'Role deleted successfully']);
     }
 }

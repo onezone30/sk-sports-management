@@ -22,6 +22,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request): JsonResponse
     {
         $user = $this->userService->create($request->validated());
+
         return (new UserResource($user->load('role')))->response()->setStatusCode(201);
     }
 
@@ -38,6 +39,7 @@ class UserController extends Controller
     public function destroy(User $user): JsonResponse
     {
         $this->userService->delete($user);
+
         return response()->json(['message' => 'User deleted successfully']);
     }
 }
