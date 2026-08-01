@@ -14,10 +14,19 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'active' => \App\Http\Middleware\CheckInactivity::class,
+            'role' => \App\Http\Middleware\EnsureRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (\App\Exceptions\UserNotFoundException $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+        $exceptions->render(function (\App\Exceptions\RoleInUseException $e) {
+            return response()->json(['message' => $e->getMessage()], 409);
+        });
+
+        $exceptions->render(function (\App\Exceptions\InactiveAccountException $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
+        });
+
+        $exceptions->render(function (\App\Exceptions\InvalidCredentialsException $e) {
+            return response()->json(['message' => $e->getMessage()], 401);
         });
     })->create();
