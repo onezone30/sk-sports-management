@@ -12,7 +12,7 @@ Authorization: Bearer <token>
 ## Auth
 
 ### POST /login
-Public. No token required.
+Public. No token required. Rate-limited to 5 attempts/minute per IP (`throttle:5,1`).
 
 **Request**
 ```json
@@ -22,13 +22,21 @@ Public. No token required.
 **Response 200**
 ```json
 {
-  "user": { "id": 1, "name": "...", "email": "...", "role_id": 1 },
+  "user": {
+    "id": 1, "name": "...", "email": "...",
+    "role": { "id": 1, "name": "Admin" },
+    "status": "active", "created_at": "2026-07-31 10:22:00"
+  },
   "access_token": "<sanctum-token>",
   "token_type": "Bearer"
 }
 ```
 
-**Response 401** — invalid credentials
+**Response 401** — invalid credentials (`{ "message": "Invalid login details." }`)
+
+**Response 403** — account status is not `active` (`{ "message": "This account is not active. Contact an administrator." }`)
+
+**Response 429** — too many attempts
 
 ---
 
@@ -51,15 +59,19 @@ Auth required. Returns the currently authenticated user.
 
 ## Users
 
-All routes require auth + `active` middleware.
+All routes require auth + `active` middleware. `store`, `update`, and `destroy`
+additionally require `role:Admin` — a temporary stopgap until real permission
+checks land (see backend's Implementation Status). A non-Admin gets **403**.
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | /users | List all users |
-| POST | /users | Create a user |
-| GET | /user/{id} | Get a user |
-| PATCH | /user/{id} | Update a user |
-| DELETE | /user/{id} | Delete a user |
+All routes accept both `PUT` and `PATCH` for updates (Laravel `apiResource` registers both); examples below use `PATCH`.
+
+| Method | Path | Description | Access |
+|--------|------|-------------|--------|
+| GET | /users | List all users | any signed-in user |
+| POST | /users | Create a user | Admin |
+| GET | /users/{id} | Get a user | any signed-in user |
+| PATCH | /users/{id} | Update a user | Admin |
+| DELETE | /users/{id} | Delete a user | Admin |
 
 **POST /users — Request body**
 ```json
@@ -67,18 +79,20 @@ All routes require auth + `active` middleware.
   "name": "string (required)",
   "email": "string (required, unique)",
   "password": "string (required, min:8)",
-  "role_id": "integer (required)"
+  "role_id": "integer (required)",
+  "status": "string (active|inactive|archived|done, optional)"
 }
 ```
 
-**PATCH /user/{id} — Request body**
+**PATCH /users/{id} — Request body**
 All fields are optional (`sometimes`).
 ```json
 {
   "name": "string",
   "email": "string",
   "password": "string",
-  "role_id": "integer"
+  "role_id": "integer",
+  "status": "string (active|inactive|archived|done)"
 }
 ```
 
@@ -86,22 +100,29 @@ All fields are optional (`sometimes`).
 
 ## Roles
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | /roles | List all roles |
-| POST | /roles | Create a role |
-| GET | /role/{id} | Get a role |
-| PATCH | /role/{id} | Update a role |
-| DELETE | /role/{id} | Delete a role |
+All routes require auth + `active` middleware. `store`, `update`, and `destroy`
+additionally require `role:Admin`. `index`/`show` responses are paginated and
+wrapped in `data` (same shape as `/users`).
+
+| Method | Path | Description | Access |
+|--------|------|-------------|--------|
+| GET | /roles | List all roles (paginated) | any signed-in user |
+| POST | /roles | Create a role | Admin |
+| GET | /roles/{id} | Get a role | any signed-in user |
+| PATCH | /roles/{id} | Update a role | Admin |
+| DELETE | /roles/{id} | Delete a role | Admin |
 
 **POST /roles — Request body**
 ```json
 {
   "name": "string (required, unique)",
   "description": "string (nullable)",
-  "status": "string"
+  "status": "string (active|inactive|archived|done, optional)"
 }
 ```
+
+**DELETE /roles/{id} — Response 409** — role still has users assigned to it
+(`{ "message": "Role with ID {id} is still assigned to one or more users and cannot be deleted." }`)
 
 ---
 
@@ -111,9 +132,9 @@ All fields are optional (`sometimes`).
 |--------|------|-------------|
 | GET | /seasons | List all seasons |
 | POST | /seasons | Create a season |
-| GET | /season/{id} | Get a season |
-| PATCH | /season/{id} | Update a season |
-| DELETE | /season/{id} | Delete a season |
+| GET | /seasons/{id} | Get a season |
+| PATCH | /seasons/{id} | Update a season |
+| DELETE | /seasons/{id} | Delete a season |
 
 **POST /seasons — Request body**
 ```json
@@ -135,9 +156,9 @@ All fields are optional (`sometimes`).
 |--------|------|-------------|
 | GET | /sports | List all sports |
 | POST | /sports | Create a sport |
-| GET | /sport/{id} | Get a sport |
-| PATCH | /sport/{id} | Update a sport |
-| DELETE | /sport/{id} | Delete a sport |
+| GET | /sports/{id} | Get a sport |
+| PATCH | /sports/{id} | Update a sport |
+| DELETE | /sports/{id} | Delete a sport |
 
 **POST /sports — Request body**
 ```json
@@ -160,9 +181,9 @@ Valid `name` values: `basketball`, `volleyball`, `mobile_legends`, `chess`, `bad
 |--------|------|-------------|
 | GET | /divisions | List all divisions |
 | POST | /divisions | Create a division |
-| GET | /division/{id} | Get a division |
-| PATCH | /division/{id} | Update a division |
-| DELETE | /division/{id} | Delete a division |
+| GET | /divisions/{id} | Get a division |
+| PATCH | /divisions/{id} | Update a division |
+| DELETE | /divisions/{id} | Delete a division |
 
 **POST /divisions — Request body**
 ```json

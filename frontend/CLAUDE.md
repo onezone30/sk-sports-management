@@ -5,7 +5,7 @@
 - React 18 + TypeScript (strict mode)
 - Vite + Tailwind CSS v4
 - shadcn/ui (style: `new-york`, base color: `zinc`) — Lucide icons
-- TanStack React Query (configured, not yet adopted by any page)
+- TanStack React Query (adopted by the `users` feature)
 - TanStack React Table (via `DataTable`)
 - Path alias: `@` → `src/` (configured in both `vite.config.ts` and `tsconfig.app.json`)
 - Env: `frontend/.env` — set `VITE_API_BASE_URL=http://localhost:8000/api`
@@ -88,13 +88,13 @@ src/
 
 **Adding a new feature:** create `features/<name>/model/` and `features/<name>/ui/`, then a `features/<name>/index.ts` that exports only what other layers should use. Add a `pages/<route-name>/index.tsx` that composes it, and register the route in `app/routes/AppRoutes.tsx`. See `/new-feature-frontend` for the full scaffold.
 
-**Error / utility pages with no domain logic** still get their own `pages/<name>/index.tsx` (e.g. `pages/unauthorized/index.tsx`) — there is no separate "errors" feature.
+**Error / utility pages with no domain logic** still get their own `pages/<name>/index.tsx` (e.g. `pages/errors/Unauthorized.tsx`) — there is no separate "errors" feature slice, just a plain page component.
 
 **Current slices:**
-- `entities`: `user`
-- `features`: `auth`
+- `entities`: `user` (includes `api/useUsers` — the plain read), `role` (includes `api/useRoles`) — read-only data fetching for a business object lives here; create/update/delete actions and their UI stay in the matching `features` slice
+- `features`: `auth`, `users`
 - `widgets`: `app-nav`, `app-sidebar`, `footer`, `landing-sections`
-- `pages`: `landing`, `login`, `dashboard`, `users`, `unauthorized`
+- `pages`: `landing`, `login`, `dashboard`, `users`, `errors`
 
 ---
 
@@ -170,6 +170,6 @@ npx shadcn@latest add <component>
 | Auth (login/logout, session bootstrap) | Complete |
 | Route-level sign-in enforcement | Complete (`ProtectedLayout`) |
 | Permission-level route gating | `PermissionGuard` exists — **not applied to any route** (backend doesn't seed/enforce permissions yet) |
-| Users | Complete, still on manual `useState`/`useEffect` — candidate for React Query migration |
+| Users | Complete, on React Query (`useUsers`/`useRoles`) |
 | Dashboard | Static mock data — no live data yet |
 | `/about`, `/contact` | Placeholder routes only |
