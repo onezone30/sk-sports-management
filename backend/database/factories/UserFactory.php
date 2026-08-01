@@ -24,15 +24,17 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $playerRole = Role::where('name', 'Player')->first();
-
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'role_id' => $playerRole->id,
+            // Lazy default: only creates a Role if the test/seeder didn't
+            // already pass one in. Avoids a fatal when no 'Player' role
+            // exists yet — the previous Role::where('name', 'Player')->first()
+            // depended on RoleSeeder having already run with that exact name.
+            'role_id' => Role::factory(),
         ];
     }
 
