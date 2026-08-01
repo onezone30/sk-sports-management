@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Modal } from "@/shared/components/Modal";
 import { Button } from "@/shared/ui/button";
 import { Spinner } from "@/shared/ui/spinner";
@@ -12,6 +13,7 @@ interface ConfirmDialogProps {
     onConfirm: () => void;
     isLoading?: boolean;
     variant?: "default" | "destructive";
+    children?: ReactNode;
 }
 
 export function ConfirmDialog({
@@ -24,6 +26,7 @@ export function ConfirmDialog({
     onConfirm,
     isLoading = false,
     variant = "default",
+    children,
 }: ConfirmDialogProps) {
     return (
         <Modal
@@ -42,6 +45,8 @@ export function ConfirmDialog({
                     </Button>
                 </>
             }
-        />
+        >
+            {children}
+        </Modal>
     );
 }

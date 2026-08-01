@@ -1,3 +1,4 @@
 export { AuthProvider } from "./model/AuthProvider";
 export { useAuth } from "./model/useAuth";
 export { LoginForm } from "./ui/LoginForm";
+export { AuthGate } from "./ui/AuthGate";

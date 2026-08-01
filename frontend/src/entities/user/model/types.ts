@@ -8,8 +8,9 @@ export interface User {
     name: string;
     email: string;
     role?: UserRole;
-    role_id?: number;
     status?: string;
     created_at?: string;
+    // Not populated yet — backend has no permission module. Once UserResource
+    // returns it, this starts working with no frontend change.
     permissions?: string[];
 }

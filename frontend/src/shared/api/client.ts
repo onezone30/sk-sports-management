@@ -19,8 +19,14 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use((response) => response, (error) => {
-    if(error.response && error.response.status === 401) {
+    // Skip the login request itself — a 401 there just means bad credentials,
+    // and LoginForm needs to render that message instead of being redirected
+    // (redirecting to /login from /login is a full reload that wipes it).
+    const isLoginRequest = error.config?.url?.includes("/login");
+
+    if (error.response && error.response.status === 401 && !isLoginRequest) {
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
         window.location.href = "/login";
     }
     return Promise.reject(error);

@@ -1,44 +1,33 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/shared/ui/button";
 import { DataTable } from "@/shared/components/DataTable";
+import { Alert } from "@/shared/components/Alert";
 import { createColumns } from "./columns";
-import { UserFormModal, DeleteUserDialog, useUsers } from "@/features/users";
-import type { User as UserType } from "@/entities/user";
+import { UserFormModal, DeleteUserDialog } from "@/features/users";
+import { useUsers, type User as UserType } from "@/entities/user";
 import { Spinner } from "@/shared/ui/spinner";
 
 import PageHeader from "@/shared/components/PageHeader";
 
-
+type ModalState =
+    | { type: "create" }
+    | { type: "edit"; user: UserType }
+    | { type: "delete"; user: UserType }
+    | null;
 
 export default function Users() {
-    const { data: users = [], isLoading, error } = useUsers();
-    const [editingUser, setEditingUser] = useState<UserType | null>(null);
-    const [deletingUser, setDeletingUser] = useState<UserType | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    const { data: users = [], isLoading, error, refetch } = useUsers();
+    const [modal, setModal] = useState<ModalState>(null);
 
-    const openCreateModal = () => {
-        setEditingUser(null);
-        setIsModalOpen(true);
-    };
+    const openCreateModal = useCallback(() => setModal({ type: "create" }), []);
+    const openEditModal = useCallback((user: UserType) => setModal({ type: "edit", user }), []);
+    const openDeleteDialog = useCallback((user: UserType) => setModal({ type: "delete", user }), []);
+    const closeModal = useCallback(() => setModal(null), []);
 
-    const openEditModal = (user: UserType) => {
-        setEditingUser(user);
-        setIsModalOpen(true);
-    };
+    const columns = useMemo(() => createColumns(openEditModal, openDeleteDialog), [openEditModal, openDeleteDialog]);
 
-    const openDeleteDialog = (user: UserType) => {
-        setDeletingUser(user);
-        setIsDeleteOpen(true);
-    };
-
-    const handleSuccess = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleDeleteSuccess = () => {
-        setIsDeleteOpen(false);
-    };
+    const isFormOpen = modal?.type === "create" || modal?.type === "edit";
+    const isDeleteOpen = modal?.type === "delete";
 
     return (
         <div className="flex-1 space-y-6">
@@ -50,33 +39,37 @@ export default function Users() {
             </PageHeader>
 
             {/* User Table */}
-            {error && (
-                <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                    Failed to load users.
-                </div>
-            )}
-
             {isLoading ? (
                 <div className="flex h-48 items-center justify-center rounded-md border">
                     <Spinner className="size-8" />
                 </div>
+            ) : error ? (
+                <Alert className="flex flex-col items-start gap-2">
+                    <span>Failed to load users.</span>
+                    <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
+                </Alert>
             ) : (
-                <DataTable columns={createColumns(openEditModal, openDeleteDialog)} data={users} />
+                <DataTable columns={columns} data={users} />
             )}
 
-            <UserFormModal
-                open={isModalOpen}
-                onOpenChange={setIsModalOpen}
-                user={editingUser}
-                onSuccess={handleSuccess}
-            />
+            {isFormOpen && (
+                <UserFormModal
+                    key={modal?.type === "edit" ? modal.user.id : "new"}
+                    open={isFormOpen}
+                    onOpenChange={(open) => !open && closeModal()}
+                    user={modal?.type === "edit" ? modal.user : null}
+                    onSuccess={closeModal}
+                />
+            )}
 
-            <DeleteUserDialog
-                open={isDeleteOpen}
-                onOpenChange={setIsDeleteOpen}
-                user={deletingUser}
-                onSuccess={handleDeleteSuccess}
-            />
+            {isDeleteOpen && (
+                <DeleteUserDialog
+                    open={isDeleteOpen}
+                    onOpenChange={(open) => !open && closeModal()}
+                    user={modal?.type === "delete" ? modal.user : null}
+                    onSuccess={closeModal}
+                />
+            )}
         </div>
     );
 }

@@ -1,56 +1,57 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Loader2, Lock, Mail } from "lucide-react";
+import { useLocation, useNavigate, type Location } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
+import { Mail, Lock } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import { Label } from "@/shared/ui/label";
+import { FormField } from "@/shared/components/FormField";
+import { Alert } from "@/shared/components/Alert";
+import { Spinner } from "@/shared/ui/spinner";
+import { useFormErrors } from "@/shared/hooks/useFormErrors";
 import api from "@/shared/api/client";
+import type { User } from "@/entities/user";
 import { useAuth } from "../model/useAuth";
+
+interface LoginResponse {
+    user: User;
+    access_token: string;
+    token_type: string;
+}
 
 export function LoginForm() {
     const navigate = useNavigate();
+    const location = useLocation();
     const { login } = useAuth();
-    const [isLoading, setIsLoading] = useState(false);
 
-    const [formData, setFormData] = useState({
-        email: "",
-        password: ""
-    });
-    const [error, setError] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const { formError, handleError, reset } = useFormErrors();
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.id]: e.target.value
-        })
-        setError("");
-    }
-
-    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setIsLoading(true);
-        try {
-            const response = await api.post("/login", formData);
-
-            console.log("Login successful:", response.data);
-            login(response.data.access_token, response.data.user);
-            navigate('/dashboard');
-        } catch (error: any) {
-            console.error(error);
-            if(error.response && error.response.status === 401) {
-                setError("Invalid email or password");
-
-            } else {
-                setError("Something went wrong. Please try again");
+    const loginMutation = useMutation({
+        mutationFn: () => api.post<LoginResponse>("/login", { email, password }),
+        onSuccess: ({ data }) => {
+            login(data.access_token, data.user);
+            // AuthGate redirects here with the originally-requested URL in state;
+            // fall back to the dashboard for a plain /login visit.
+            const from = (location.state as { from?: Location } | null)?.from;
+            navigate(from ? `${from.pathname}${from.search}` : "/dashboard", { replace: true });
+        },
+        onError: (error: unknown) => {
+            handleError(error);
+            // Only clear the password on a genuine auth failure — a transient
+            // network error shouldn't force the user to retype everything.
+            if (isAxiosError(error) && error.response?.status === 401) {
+                setPassword("");
             }
-            setFormData({
-                email: "",
-                password: ""
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    }
+        },
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        reset();
+        loginMutation.mutate();
+    };
 
     return (
         <div className="w-full max-w-sm">
@@ -64,15 +65,10 @@ export function LoginForm() {
                 Enter your credentials to access your dashboard
             </p>
 
-            <form onSubmit={handleLogin} className="mt-8 grid gap-4">
-                {error && (
-                    <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
-                        {error}
-                    </div>
-                )}
+            <form onSubmit={handleSubmit} className="mt-8 grid gap-4">
+                {formError && <Alert>{formError}</Alert>}
 
-                <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
+                <FormField id="email" label="Email">
                     <div className="relative">
                         <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -84,40 +80,28 @@ export function LoginForm() {
                             autoCorrect="off"
                             className="px-10"
                             required
-                            value={formData.email}
-                            onChange={handleChange}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
-                </div>
+                </FormField>
 
-                <div className="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
+                <FormField id="password" label="Password">
                     <div className="relative">
                         <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-
                         <Input
                             id="password"
                             type="password"
                             className="px-10"
                             required
-                            value={formData.password}
-                            onChange={handleChange}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
-
                     </div>
+                </FormField>
 
-                    <div className="flex justify-end">
-                        <Link
-                            to="/forgot-password"
-                            className="text-xs font-medium text-primary hover:underline"
-                        >
-                            Forgot password?
-                        </Link>
-                    </div>
-                </div>
-
-                <Button className="mt-4 w-full" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Button className="mt-4 w-full" disabled={loginMutation.isPending}>
+                    {loginMutation.isPending && <Spinner className="size-4" />}
                     Sign In
                 </Button>
             </form>

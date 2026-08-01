@@ -1,6 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/features/auth";
-import { Spinner } from "@/shared/ui/spinner";
+import { AuthGate, useAuth } from "@/features/auth";
 
 interface PermissionGuardProps {
     children: React.ReactNode;
@@ -9,27 +8,15 @@ interface PermissionGuardProps {
 }
 
 export function PermissionGuard({ children, requiredPermissions, requireAll = false }: PermissionGuardProps) {
-    const { user, isLoading, hasAnyPermission, hasAllPermissions } = useAuth();
+    const { hasAnyPermission, hasAllPermissions } = useAuth();
 
-    if (isLoading) {
-        return (
-            <div className="flex min-h-screen items-center justify-center">
-                <Spinner className="size-8" />
-            </div>
-        );
-    }
-
-    if (!user) {
-        return <Navigate to="/login" replace />;
-    }
-
-    const hasAccess = requireAll 
+    const hasAccess = requireAll
         ? hasAllPermissions(requiredPermissions)
         : hasAnyPermission(requiredPermissions);
 
-    if (!hasAccess) {
-        return <Navigate to="/unauthorized" replace />;
-    }
-
-    return <>{children}</>;
+    return (
+        <AuthGate>
+            {hasAccess ? children : <Navigate to="/unauthorized" replace />}
+        </AuthGate>
+    );
 }

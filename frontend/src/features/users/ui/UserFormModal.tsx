@@ -1,25 +1,15 @@
-import { useEffect, useState } from "react";
-import { isAxiosError } from "axios";
+import { useState } from "react";
 import { Modal } from "@/shared/components/Modal";
+import { FormField } from "@/shared/components/FormField";
+import { Alert } from "@/shared/components/Alert";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import { Label } from "@/shared/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Spinner } from "@/shared/ui/spinner";
-import api from "@/shared/api/client";
-import { useCreateUser, useUpdateUser } from "../model/useUsers";
+import { useFormErrors } from "@/shared/hooks/useFormErrors";
+import { useCreateUser, useUpdateUser } from "../model/useUserMutations";
+import { useRoles } from "@/entities/role";
 import type { User } from "@/entities/user";
-
-interface Role {
-    id: number;
-    name: string;
-}
 
 interface UserFormModalProps {
     open: boolean;
@@ -33,37 +23,21 @@ const FORM_ID = "user-form";
 export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormModalProps) {
     const isEditMode = Boolean(user);
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
+    const [name, setName] = useState(user?.name ?? "");
+    const [email, setEmail] = useState(user?.email ?? "");
     const [password, setPassword] = useState("");
-    const [roleId, setRoleId] = useState("");
-    const [roles, setRoles] = useState<Role[]>([]);
-    const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
-    const [formError, setFormError] = useState<string | null>(null);
+    const [roleId, setRoleId] = useState(user?.role?.id ? String(user.role.id) : "");
 
+    const { formError, fieldError, handleError, reset } = useFormErrors();
+
+    const { data: roles = [], isLoading: isLoadingRoles, isError: isRolesError, refetch: refetchRoles } = useRoles();
     const createUser = useCreateUser();
     const updateUser = useUpdateUser();
     const isSubmitting = createUser.isPending || updateUser.isPending;
 
-    useEffect(() => {
-        if (!open) return;
-
-        setName(user?.name ?? "");
-        setEmail(user?.email ?? "");
-        setPassword("");
-        setRoleId(user?.role?.id ? String(user.role.id) : "");
-        setFieldErrors({});
-        setFormError(null);
-
-        api.get("/roles")
-            .then((response) => setRoles(response.data))
-            .catch(() => setRoles([]));
-    }, [open, user]);
-
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        setFieldErrors({});
-        setFormError(null);
+        reset();
 
         const payload = {
             name,
@@ -81,15 +55,9 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
 
             onSuccess();
         } catch (err) {
-            if (isAxiosError(err) && err.response?.status === 422) {
-                setFieldErrors(err.response.data.errors ?? {});
-            } else {
-                setFormError("Something went wrong. Please try again.");
-            }
+            handleError(err);
         }
     };
-
-    const fieldError = (field: string) => fieldErrors[field]?.[0];
 
     return (
         <Modal
@@ -110,35 +78,67 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
             }
         >
             <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-4">
-                {formError && (
-                    <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                        {formError}
-                    </div>
-                )}
+                {formError && <Alert>{formError}</Alert>}
 
-                <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} aria-invalid={!!fieldError("name")} />
-                    {fieldError("name") && <p className="text-xs text-destructive">{fieldError("name")}</p>}
-                </div>
+                <FormField id="name" label="Name" error={fieldError("name")}>
+                    <Input
+                        id="name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        aria-invalid={!!fieldError("name")}
+                        aria-describedby={fieldError("name") ? "name-error" : undefined}
+                    />
+                </FormField>
 
-                <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} aria-invalid={!!fieldError("email")} />
-                    {fieldError("email") && <p className="text-xs text-destructive">{fieldError("email")}</p>}
-                </div>
+                <FormField id="email" label="Email" error={fieldError("email")}>
+                    <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        aria-invalid={!!fieldError("email")}
+                        aria-describedby={fieldError("email") ? "email-error" : undefined}
+                    />
+                </FormField>
 
-                <div className="space-y-2">
-                    <Label htmlFor="password">Password{isEditMode && <span className="text-muted-foreground font-normal">(leave blank to keep unchanged)</span>}</Label>
-                    <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} aria-invalid={!!fieldError("password")} />
-                    {fieldError("password") && <p className="text-xs text-destructive">{fieldError("password")}</p>}
-                </div>
+                <FormField
+                    id="password"
+                    label={<>Password{isEditMode && <span className="text-muted-foreground font-normal">(leave blank to keep unchanged)</span>}</>}
+                    error={fieldError("password")}
+                >
+                    <Input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        aria-invalid={!!fieldError("password")}
+                        aria-describedby={fieldError("password") ? "password-error" : undefined}
+                    />
+                </FormField>
 
-                <div className="space-y-2">
-                    <Label htmlFor="role">Role</Label>
-                    <Select value={roleId} onValueChange={setRoleId}>
-                        <SelectTrigger id="role" className="w-full" aria-invalid={!!fieldError("role_id")}>
-                            <SelectValue placeholder="Select a role" />
+                <FormField
+                    id="role"
+                    label="Role"
+                    error={
+                        fieldError("role_id") ??
+                        (isRolesError ? (
+                            <>
+                                Failed to load roles.{" "}
+                                <button type="button" onClick={() => refetchRoles()} className="underline">
+                                    Retry
+                                </button>
+                            </>
+                        ) : undefined)
+                    }
+                >
+                    <Select value={roleId} onValueChange={setRoleId} disabled={isLoadingRoles}>
+                        <SelectTrigger
+                            id="role"
+                            className="w-full"
+                            aria-invalid={!!fieldError("role_id")}
+                            aria-describedby={fieldError("role_id") || isRolesError ? "role-error" : undefined}
+                        >
+                            <SelectValue placeholder={isLoadingRoles ? "Loading roles..." : "Select a role"} />
                         </SelectTrigger>
                         <SelectContent>
                             {roles.map((role) => (
@@ -148,8 +148,7 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
                             ))}
                         </SelectContent>
                     </Select>
-                    {fieldError("role_id") && <p className="text-xs text-destructive">{fieldError("role_id")}</p>}
-                </div>
+                </FormField>
             </form>
         </Modal>
     );
