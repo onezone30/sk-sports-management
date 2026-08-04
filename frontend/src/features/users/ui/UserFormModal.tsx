@@ -7,6 +7,7 @@ import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Spinner } from "@/shared/ui/spinner";
 import { useFormErrors } from "@/shared/hooks/useFormErrors";
+import { notify } from "@/shared/lib/alerts";
 import { useCreateUser, useUpdateUser } from "../model/useUserMutations";
 import { useRoles } from "@/entities/role";
 import type { User } from "@/entities/user";
@@ -54,6 +55,7 @@ export function UserFormModal({ open, onOpenChange, user, onSuccess }: UserFormM
             }
 
             onSuccess();
+            notify.success(isEditMode ? "User updated" : "User created");
         } catch (err) {
             handleError(err);
         }

@@ -14,7 +14,8 @@ export function useCreateUser() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (payload: UserPayload) => api.post("/users", payload),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] })
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] }),
+        meta: { skipGlobalError: true },
     });
 }
 
@@ -22,7 +23,8 @@ export function useUpdateUser() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ id, payload }: { id: number; payload: UserPayload }) => api.put(`/users/${id}`, payload),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] })
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] }),
+        meta: { skipGlobalError: true },
     });
 }
 
