@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import type { DragEvent } from "react";
 import { ImagePlus, X } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
@@ -32,13 +32,34 @@ export function Dropzone({ files, onChange, maxFiles = 8, accept = "image/jpeg,i
         addFiles(event.dataTransfer.files);
     };
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if ((event.key === "Enter" || event.key === " ") && !disabled) {
+            event.preventDefault();
+            inputRef.current?.click();
+        }
+    };
+
+    // Cache object URLs and revoke them on cleanup or file changes
+    const fileUrls = useMemo(() => {
+        return files.map(file => URL.createObjectURL(file));
+    }, [files]);
+
+    useEffect(() => {
+        return () => {
+            fileUrls.forEach(url => URL.revokeObjectURL(url));
+        };
+    }, [fileUrls]);
+
     return (
         <div className="space-y-3">
             <div
                 onClick={() => !disabled && inputRef.current?.click()}
+                onKeyDown={handleKeyDown}
                 onDragOver={(e) => { e.preventDefault(); if (!disabled) setIsDragging(true); }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
+                role="button"
+                tabIndex={disabled ? -1 : 0}
                 className={cn(
                     "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground transition",
                     isDragging && "border-primary bg-primary/5",
@@ -62,8 +83,8 @@ export function Dropzone({ files, onChange, maxFiles = 8, accept = "image/jpeg,i
             {files.length > 0 && (
                 <div className="grid grid-cols-4 gap-3">
                     {files.map((file, index) => (
-                        <div key={`${file.name}-${index}`} className="group relative aspect-square overflow-hidden rounded-md border">
-                            <img src={URL.createObjectURL(file)} alt={file.name} className="h-full w-full object-cover" />
+                        <div key={fileUrls[index]} className="group relative aspect-square overflow-hidden rounded-md border">
+                            <img src={fileUrls[index]} alt={file.name} className="h-full w-full object-cover" />
                             <button
                                 type="button"
                                 onClick={() => removeFile(index)}
