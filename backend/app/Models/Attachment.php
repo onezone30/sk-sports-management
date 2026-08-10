@@ -15,7 +15,15 @@ class Attachment extends Model
         'extension',
         'url',
         'uploaded_by',
+        'is_primary',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_primary' => 'boolean',
+        ];
+    }
 
     public function attachable()
     {
