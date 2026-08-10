@@ -6,6 +6,8 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SeasonController;
 use App\Http\Controllers\SportController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VenueController;
+use App\Http\Controllers\VenueImageController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
@@ -25,6 +27,15 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::apiResource('roles', RoleController::class)
         ->only(['store', 'update', 'destroy'])
         ->middleware('role:Admin');
+
+    Route::apiResource('venues', VenueController::class)->only(['index', 'show']);
+    Route::apiResource('venues', VenueController::class)
+        ->only(['store', 'update', 'destroy'])
+        ->middleware('role:Admin');
+
+    Route::post('venues/{venue}/images', [VenueImageController::class, 'store'])->middleware('role:Admin');
+    Route::delete('venues/{venue}/images/{image}', [VenueImageController::class, 'destroy'])->middleware('role:Admin');
+    Route::patch('venues/{venue}/images/{image}/primary', [VenueImageController::class, 'setPrimary'])->middleware('role:Admin');
 
     Route::apiResources([
         'seasons' => SeasonController::class,

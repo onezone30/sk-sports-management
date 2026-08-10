@@ -29,4 +29,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (\App\Exceptions\InvalidCredentialsException $e) {
             return response()->json(['message' => $e->getMessage()], 401);
         });
+
+        $exceptions->render(function (\App\Exceptions\VenueImageLimitExceededException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        });
     })->create();
