@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { User, LayoutDashboard, LogOut, Menu, X, LogIn } from "lucide-react";
+import { User, Users, LayoutDashboard, LogOut, Menu, X, LogIn } from "lucide-react";
 import skLogo from "@/shared/assets/sk_logo.png";
 import { Button } from "@/shared/ui/button";
 import { useAuth } from "@/features/auth";
@@ -8,6 +8,7 @@ import { useAuth } from "@/features/auth";
 const links = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/users", label: "Users", icon: User },
+    { to: "/players", label: "Players", icon: Users },
 ];
 
 export function AppSidebar() {

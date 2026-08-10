@@ -118,11 +118,22 @@ Each sport type also defines its stat keys — see `SportsType::stats()` in `app
 |--------|------|-------|
 | id | bigint | PK |
 | first_name | string | |
+| middle_name | string | nullable |
 | last_name | string | |
+| suffix | string | nullable — e.g. `Jr.`, `III` |
 | date_of_birth | date | used to validate age against division min/max_age |
+| gender | string (Gender enum) | `male` or `female` |
+| email | string | nullable |
+| phone | string | nullable |
+| emergency_contact_name | string | nullable |
+| emergency_contact_phone | string | nullable |
 | status | string | default: `active` |
 
-Players are not tied to a team directly — the `team_players` pivot handles that.
+Unique constraint on `(first_name, last_name, date_of_birth)` — guards against registering the same person twice, which would split their stats across two records. Indexed on `last_name` for list ordering/search.
+
+Players are not tied to a team directly — the `team_players` pivot handles that. Players also have **no link to `users`** — they don't log in; that's a deliberate scope decision, not an oversight (see `docs/overview.md`'s "who it's for" section for the aspirational player self-service angle this doesn't implement yet).
+
+`age` and `full_name` are computed accessors on the model, never stored columns — `age` is always derived from `date_of_birth` against today's date.
 
 ---
 
@@ -135,9 +146,13 @@ Players are not tied to a team directly — the `team_players` pivot handles tha
 | jersey_number | string | nullable |
 | position | string | nullable |
 | is_captain | boolean | default: false |
+| height_cm | unsigned smallint | nullable |
+| weight_kg | unsigned smallint | nullable |
 | status | string | default: `active` |
 
 Unique constraint on `(player_id, team_id)` — a player can appear in multiple teams, but only once per team.
+
+`height_cm`/`weight_kg` live here rather than on `players` deliberately: they aren't permanent facts about a person (they change as a player grows/trains) and they're sport-specific (meaningless for chess or Mobile Legends). Recording them per team-roster-registration keeps them time-scoped and keeps `players` sport-agnostic.
 
 ---
 
@@ -200,3 +215,12 @@ Unique constraint on `(player_id, team_id)` — a player can appear in multiple 
 | `inactive` | Not started or paused |
 | `archived` | Historical, no longer active |
 | `done` | Completed |
+
+## Gender Values (Gender enum)
+
+| Value | Meaning |
+|-------|---------|
+| `male` | Male |
+| `female` | Female |
+
+Used on `players.gender`. `divisions.gender_requirement` is a separate, untyped string column — it isn't cast to this enum yet, since Divisions is flagged for a refactor to the layered pattern (see `backend/CLAUDE.md`'s Implementation Status) and that's where it should be aligned.

@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('jersey_number')->nullable();
             $table->string('position')->nullable();
             $table->boolean('is_captain')->default(false);
+            $table->unsignedSmallInteger('height_cm')->nullable();
+            $table->unsignedSmallInteger('weight_kg')->nullable();
             $table->string('status')->default(Status::ACTIVE->value);
             $table->unique(['player_id', 'team_id']);
             $table->timestamps();

@@ -43,7 +43,31 @@ Games use `Status` but only two values are meaningful:
 
 ## Player age vs Division age
 
-A player's `date_of_birth` determines which division they're eligible for based on `divisions.min_age` and `divisions.max_age`. This validation is not enforced in the current controllers — it's a business rule that needs to be added when registering a player to a team.
+A player's `date_of_birth` determines which division they're eligible for based on `divisions.min_age` and `divisions.max_age`. This validation is not enforced in the current controllers — it's a business rule that needs to be added when registering a player to a team. `Player::age` is a computed accessor (never a stored column) for exactly this purpose.
+
+---
+
+## Why height/weight live on team_players, not players
+
+A player's height and weight aren't permanent facts about them — they change as someone grows or trains — and they're sport-specific (meaningless for chess or Mobile Legends). `players` is deliberately sport-agnostic (see `docs/overview.md`'s guiding principles), so these columns live on the `team_players` pivot instead, recorded per team-roster registration. That makes them naturally time-scoped: a player's height at 15 doesn't overwrite their height at 19.
+
+---
+
+## Duplicate player prevention
+
+`players` has a unique constraint on `(first_name, last_name, date_of_birth)`, enforced both in the DB and in `StorePlayerRequest`/`UpdatePlayerRequest` via a `withValidator` check (not a plain `Rule::unique()` — see the comment in those classes for why: the `date_of_birth` column is stored with a full datetime format, so a raw string comparison misses matches that `whereDate()` catches correctly). The same person being registered twice would silently split their stats across two player records — this constraint is a deliberate guard against that, not an obscure edge case.
+
+---
+
+## Deleting a player with recorded history
+
+Both `team_players` and `player_stats` reference `players` and previously cascade-deleted with it — meaning deleting a player would silently wipe a season's worth of roster history and stats. `PlayerService::delete()` now checks for either before deleting and throws `PlayerInUseException` (mapped to a 409 in `bootstrap/app.php`), mirroring `RoleInUseException`'s pattern for roles still assigned to users.
+
+---
+
+## Players have no login
+
+Unlike `docs/overview.md`'s long-term vision (players eventually seeing their own team/schedule/stats), `players` is intentionally **not** linked to `users` — no `user_id` column, no player accounts. This was an explicit scope decision, not an oversight: player self-service login is a separate feature to design later, not a side effect of building Players CRUD.
 
 ---
 
