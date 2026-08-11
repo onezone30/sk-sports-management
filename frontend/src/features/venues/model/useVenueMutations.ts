@@ -32,7 +32,8 @@ function toFormData(payload: VenuePayload): FormData {
 export function useCreateVenue() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (payload: VenuePayload) => api.post("/venues", toFormData(payload)),
+        mutationFn: (payload: VenuePayload) =>
+            api.post("/venues", toFormData(payload), { headers: { "Content-Type": undefined } }),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["venues"] }),
         meta: { skipGlobalError: true },
     });
@@ -62,7 +63,9 @@ export function useAddVenueImage() {
         mutationFn: ({ venueId, file }: { venueId: number; file: File }) => {
             const formData = new FormData();
             formData.append("image", file);
-            return api.post<{ data: VenueImage }>(`/venues/${venueId}/images`, formData);
+            return api.post<{ data: VenueImage }>(`/venues/${venueId}/images`, formData, {
+                headers: { "Content-Type": undefined },
+            });
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["venues"] }),
         meta: { skipGlobalError: true },

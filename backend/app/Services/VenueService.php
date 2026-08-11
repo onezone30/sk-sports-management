@@ -24,6 +24,10 @@ class VenueService
     /** @param UploadedFile[] $images */
     public function create(array $data, array $images = [], ?int $uploadedBy = null): Venue
     {
+        if (count($images) > self::MAX_IMAGES) {
+            throw new VenueImageLimitExceededException();
+        }
+
         $venue = $this->venueRepo->create($data);
 
         foreach ($images as $index => $file) {
