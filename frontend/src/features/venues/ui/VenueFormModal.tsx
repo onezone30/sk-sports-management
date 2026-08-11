@@ -53,6 +53,11 @@ export function VenueFormModal({ open, onOpenChange, venue, onSuccess }: VenueFo
     const { data: liveVenue } = useVenue(venue?.id ?? 0, { enabled: isEditMode });
     const galleryImages = liveVenue?.images ?? venue?.images ?? [];
 
+    const imagesError =
+        fieldError("images") ??
+        fieldError("image") ??
+        Array.from({ length: 8 }, (_, i) => fieldError(`images.${i}`)).find(Boolean);
+
     const createVenue = useCreateVenue();
     const updateVenue = useUpdateVenue();
     const addImage = useAddVenueImage();
@@ -165,7 +170,7 @@ export function VenueFormModal({ open, onOpenChange, venue, onSuccess }: VenueFo
                     <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
                 </FormField>
 
-                <FormField id="images" label="Images" error={fieldError("images")}>
+                <FormField id="images" label="Images" error={imagesError}>
                     {isEditMode && venue ? (
                         <div className="space-y-3">
                             {galleryImages.length > 0 && (
