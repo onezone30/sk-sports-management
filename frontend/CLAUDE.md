@@ -91,10 +91,10 @@ src/
 **Error / utility pages with no domain logic** still get their own `pages/<name>/index.tsx` (e.g. `pages/errors/Unauthorized.tsx`) — there is no separate "errors" feature slice, just a plain page component.
 
 **Current slices:**
-- `entities`: `user` (includes `api/useUsers` — the plain read), `role` (includes `api/useRoles`) — read-only data fetching for a business object lives here; create/update/delete actions and their UI stay in the matching `features` slice
-- `features`: `auth`, `users`
+- `entities`: `user` (includes `api/useUsers` — the plain read), `role` (includes `api/useRoles`), `venue` (includes `api/useVenues`, `api/useVenue`) — read-only data fetching for a business object lives here; create/update/delete actions and their UI stay in the matching `features` slice
+- `features`: `auth`, `users`, `venues`
 - `widgets`: `app-nav`, `app-sidebar`, `footer`, `landing-sections`
-- `pages`: `landing`, `login`, `dashboard`, `users`, `errors`
+- `pages`: `landing`, `login`, `dashboard`, `users`, `venues`, `errors`
 
 ---
 
@@ -171,5 +171,6 @@ npx shadcn@latest add <component>
 | Route-level sign-in enforcement | Complete (`ProtectedLayout`) |
 | Permission-level route gating | `PermissionGuard` exists — **not applied to any route** (backend doesn't seed/enforce permissions yet) |
 | Users | Complete, on React Query (`useUsers`/`useRoles`) |
+| Venues | Complete, on React Query (`useVenues`/`useVenue`), includes image gallery |
 | Dashboard | Static mock data — no live data yet |
 | `/about`, `/contact` | Placeholder routes only |
