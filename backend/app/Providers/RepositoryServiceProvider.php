@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Repositories\Eloquent\EloquentPlayerRepository;
 use App\Repositories\Eloquent\EloquentRoleRepository;
 use App\Repositories\Eloquent\EloquentUserRepository;
 use App\Repositories\Eloquent\EloquentVenueRepository;

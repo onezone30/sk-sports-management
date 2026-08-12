@@ -202,8 +202,58 @@ Valid `name` values: `basketball`, `volleyball`, `mobile_legends`, `chess`, `bad
 
 ---
 
+## Players
+
+All routes require auth + `active` middleware. `store`, `update`, and `destroy`
+additionally require `role:Admin` — the same temporary stopgap as users/roles.
+`index`/`show` responses are paginated and wrapped in `data` (same shape as `/users`).
+
+| Method | Path | Description | Access |
+|--------|------|-------------|--------|
+| GET | /players | List all players (paginated, searchable) | any signed-in user |
+| POST | /players | Create a player | Admin |
+| GET | /players/{id} | Get a player | any signed-in user |
+| PATCH | /players/{id} | Update a player | Admin |
+| DELETE | /players/{id} | Delete a player | Admin |
+
+**GET /players — Query params**
+```
+?page=2           page number
+?search=cruz      matches against first_name, middle_name, last_name (server-side, across all pages)
+?per_page=25       optional, defaults to 25
+```
+
+**POST /players — Request body**
+```json
+{
+  "first_name": "string (required)",
+  "middle_name": "string (nullable)",
+  "last_name": "string (required)",
+  "suffix": "string (nullable) — e.g. Jr., III",
+  "date_of_birth": "date (required, must be in the past)",
+  "gender": "string (required) — 'male' or 'female'",
+  "email": "string (nullable, email format)",
+  "phone": "string (nullable)",
+  "emergency_contact_name": "string (nullable)",
+  "emergency_contact_phone": "string (nullable)",
+  "status": "string (active|inactive|archived|done, optional)"
+}
+```
+
+**PATCH /players/{id} — Request body**
+All fields are optional (`sometimes`), same shape as POST.
+
+**POST/PATCH /players — Response 422** — includes a duplicate-player check: if a player
+already exists with the same `first_name` + `last_name` + `date_of_birth`, `date_of_birth`
+comes back with `"A player with this name and date of birth is already registered."`
+
+**DELETE /players/{id} — Response 409** — player has recorded stats or roster history
+and cannot be deleted (`{ "message": "Player with ID {id} has recorded stats or roster
+history and cannot be deleted." }`)
+
+---
+
 ## Not yet routed
 
 These controllers exist but have no routes yet:
 - `TeamController` — teams CRUD
-- `PlayerController` — players CRUD

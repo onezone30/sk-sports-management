@@ -22,6 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->json(['message' => $e->getMessage()], 409);
         });
 
+        $exceptions->render(function (\App\Exceptions\PlayerInUseException $e) {
+            return response()->json(['message' => $e->getMessage()], 409);
+        });
+
         $exceptions->render(function (\App\Exceptions\InactiveAccountException $e) {
             return response()->json(['message' => $e->getMessage()], 403);
         });
