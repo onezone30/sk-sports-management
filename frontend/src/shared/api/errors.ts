@@ -7,7 +7,7 @@ export const GENERIC_ERROR = "Something went wrong. Please try again.";
 /** Returns Laravel's 422 validation errors, or null if this wasn't a validation failure. */
 export function getValidationErrors(error: unknown): FieldErrors | null {
     if (isAxiosError(error) && error.response?.status === 422) {
-        return error.response.data?.errors ?? {};
+        return error.response.data?.errors ?? null;
     }
     return null;
 }

@@ -178,5 +178,6 @@ php artisan test --filter UserTest      # run a single test class
 | Sports | Complete (needs refactor to new pattern) |
 | Divisions | Complete (needs refactor to new pattern) |
 | Teams | Controller exists — **routes not registered** |
-| Players | Complete, layered — search + pagination, duplicate-player guard, 409 on delete-with-history. No `user_id` link (players don't log in — deliberate scope decision, not pending work) |
-| Permission enforcement on routes | Permissions exist in DB — **still not enforced**. `store`/`update`/`destroy` on `users`, `roles`, and `players` are gated by `EnsureRole` (alias `role`, e.g. `role:Admin`) as a temporary stopgap — swap for the `permission` middleware once the permission tables are seeded (see `backend-rbac` skill). |
+| Venues | Complete, layered — includes image gallery via the `attachments` table |
+| Players | Controller is empty — **not implemented** |
+| Permission enforcement on routes | Permissions exist in DB — **still not enforced**. `store`/`update`/`destroy` on `users` and `roles` are gated by `EnsureRole` (alias `role`, e.g. `role:Admin`) as a temporary stopgap — swap for the `permission` middleware once the permission tables are seeded (see `backend-rbac` skill). |
