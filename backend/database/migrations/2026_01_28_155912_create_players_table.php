@@ -15,10 +15,20 @@ return new class extends Migration
         Schema::create('players', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
+            $table->string('middle_name')->nullable();
             $table->string('last_name');
+            $table->string('suffix')->nullable();
             $table->date('date_of_birth');
+            $table->string('gender');
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('emergency_contact_name')->nullable();
+            $table->string('emergency_contact_phone')->nullable();
             $table->string('status')->default(Status::ACTIVE->value);
             $table->timestamps();
+
+            $table->unique(['first_name', 'last_name', 'date_of_birth']);
+            $table->index('last_name');
         });
     }
 

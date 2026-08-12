@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { getValidationErrors, getErrorMessage, type FieldErrors } from "@/shared/api/errors";
-
-const GENERIC_ERROR = "Something went wrong. Please try again.";
+import { getValidationErrors, getErrorMessage, GENERIC_ERROR, type FieldErrors } from "@/shared/api/errors";
 
 export function useFormErrors() {
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});

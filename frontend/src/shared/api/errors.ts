@@ -2,6 +2,8 @@ import { isAxiosError } from "axios";
 
 export type FieldErrors = Record<string, string[]>;
 
+export const GENERIC_ERROR = "Something went wrong. Please try again.";
+
 /** Returns Laravel's 422 validation errors, or null if this wasn't a validation failure. */
 export function getValidationErrors(error: unknown): FieldErrors | null {
     if (isAxiosError(error) && error.response?.status === 422) {

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DivisionController;
+use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SeasonController;
 use App\Http\Controllers\SportController;
@@ -31,4 +32,12 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
         'sports' => SportController::class,
         'divisions' => DivisionController::class,
     ]);
+
+    // Players carry no RBAC-sensitive fields, but store/update/destroy are kept
+    // behind the same temporary role:Admin stopgap as users/roles until real
+    // permission checks land (see backend-rbac skill).
+    Route::apiResource('players', PlayerController::class)->only(['index', 'show']);
+    Route::apiResource('players', PlayerController::class)
+        ->only(['store', 'update', 'destroy'])
+        ->middleware('role:Admin');
 });
