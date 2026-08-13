@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('extension')->nullable();
             $table->string('size')->nullable();
             $table->string('url')->nullable();
+            $table->boolean('is_primary')->default(false);
             $table->foreignIdFor(User::class, 'uploaded_by')
                 ->nullable()
                 ->constrained()
